@@ -1,8 +1,9 @@
 import { defineConfig } from 'vite'
 import solid from 'vite-plugin-solid'
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  plugins: [solid()],
+  plugins: [solid(), tailwindcss()],
   build: {
     target: 'esnext',
     outDir: 'dist',
@@ -15,5 +16,6 @@ export default defineConfig({
     alias: {
       '~': '/src',
     },
+    extensions: ['.js', '.ts', '.jsx', '.tsx'],
   },
 })
