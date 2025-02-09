@@ -1,0 +1,23 @@
+{
+  "name": "share-it",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "bun run --filter=api dev & bun run --filter=web dev",
+    "build": "bun run --filter=api build & bun run --filter=web build",
+    "build:api": "bun run --filter=api build",
+    "build:web": "bun run --filter=web build"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "wrangler": "^3.107.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
