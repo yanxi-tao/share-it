@@ -18,12 +18,10 @@ RUN bun build:api
 FROM base AS release
 # Copy only production necessities
 COPY --from=build /app/apps/api/package.json .
-# Install PRODUCTION dependencies only
-RUN bun install --production
 # Copy built assets from build stage
 COPY --from=build /app/apps/api/dist ./dist
 # Use production environment file
-COPY --from=build /app/apps/api/.env.production ./
+COPY --from=build /app/apps/api/.env.production .
 
 # Runtime configuration
 ENV NODE_ENV=production

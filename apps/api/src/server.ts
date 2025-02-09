@@ -1,10 +1,13 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
+import { auth } from '~/lib/auth'
+import { feedsRoute } from '~/endpoints/feeds'
+import { spacesRoute } from '~/endpoints/spaces'
 
 const app = new Hono()
 
-console.log('Env: ', process.env.FRONTEND_URL)
+console.log('Frontend URL: ', process.env.FRONTEND_URL)
 
 app.use(
   '*',
@@ -20,8 +23,13 @@ app.use(
 
 app.use(logger())
 
+app.on(['POST', 'GET'], '/api/auth/**', (c) => auth.handler(c.req.raw))
+
 app.get('/', (c) => {
   return c.text('Hello Hono!')
 })
+
+app.route('/feeds', feedsRoute)
+app.route('/spaces', spacesRoute)
 
 export default app

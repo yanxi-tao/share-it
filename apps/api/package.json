@@ -3,12 +3,18 @@
   "scripts": {
     "dev": "bun run --hot src/server.ts",
     "build": "bun build --target=bun --outfile=dist/server.js src/server.ts",
-    "start": "NODE_ENV=production bun run dist/server.js"
+    "start": "NODE_ENV=production bun run dist/server.js",
+    "db:push": "bun run --bun drizzle-kit push",
+    "db:studio": "bun run --bun drizzle-kit studio"
   },
   "dependencies": {
+    "@hono/zod-validator": "^0.4.2",
     "@libsql/client": "^0.14.0",
+    "better-auth": "^1.1.16",
     "drizzle-orm": "^0.39.2",
-    "hono": "^4.6.20"
+    "hono": "^4.6.20",
+    "unfurl.js": "^6.4.0",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/bun": "latest",
