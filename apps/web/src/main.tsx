@@ -4,6 +4,7 @@ import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { ReactQueryProvider } from '@/lib/providers/react-query'
+import { ThemeProvider } from '@/lib/providers/theme-provider'
 
 // Import the generated route tree
 import { routeTree } from '@/routeTree.gen'
@@ -24,9 +25,11 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
     <StrictMode>
-      <ReactQueryProvider>
-        <RouterProvider router={router} />
-      </ReactQueryProvider>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <ReactQueryProvider>
+          <RouterProvider router={router} />
+        </ReactQueryProvider>
+      </ThemeProvider>
     </StrictMode>
   )
 }
