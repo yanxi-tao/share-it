@@ -1,10 +1,16 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import tailwindcss from '@tailwindcss/vite'
+import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    TanStackRouterVite({ autoCodeSplitting: true }),
+    react(),
+    tailwindcss(),
+  ],
   build: {
     target: 'esnext',
     outDir: 'dist',
@@ -15,7 +21,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '~': '/src',
+      '@': path.resolve(__dirname, './src'),
     },
     extensions: ['.js', '.ts', '.jsx', '.tsx'],
   },

@@ -24,8 +24,9 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     /* others */
+    "baseUrl": ".",
     "paths": {
-      "~/*": [
+      "@/*": [
         "./src/*"
       ]
     }
