@@ -8,5 +8,5 @@ export const CreateSpaceSchema = z.object({
 export const CreateFeedSchema = z.object({
   userId: z.string(),
   spaceId: z.string(),
-  verifiedURL: z.string(),
+  verifiedURL: z.string().url(),
 })
