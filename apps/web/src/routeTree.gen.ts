@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as AppImport } from './routes/_app'
 import { Route as IndexImport } from './routes/index'
+import { Route as SpaceIdImport } from './routes/space/$id'
 import { Route as AppHomeImport } from './routes/_app/home'
 import { Route as AppAboutImport } from './routes/_app/about'
 
@@ -26,6 +27,12 @@ const AppRoute = AppImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const SpaceIdRoute = SpaceIdImport.update({
+  id: '/space/$id',
+  path: '/space/$id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -73,6 +80,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppHomeImport
       parentRoute: typeof AppImport
     }
+    '/space/$id': {
+      id: '/space/$id'
+      path: '/space/$id'
+      fullPath: '/space/$id'
+      preLoaderRoute: typeof SpaceIdImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -95,6 +109,7 @@ export interface FileRoutesByFullPath {
   '': typeof AppRouteWithChildren
   '/about': typeof AppAboutRoute
   '/home': typeof AppHomeRoute
+  '/space/$id': typeof SpaceIdRoute
 }
 
 export interface FileRoutesByTo {
@@ -102,6 +117,7 @@ export interface FileRoutesByTo {
   '': typeof AppRouteWithChildren
   '/about': typeof AppAboutRoute
   '/home': typeof AppHomeRoute
+  '/space/$id': typeof SpaceIdRoute
 }
 
 export interface FileRoutesById {
@@ -110,25 +126,28 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/_app/about': typeof AppAboutRoute
   '/_app/home': typeof AppHomeRoute
+  '/space/$id': typeof SpaceIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/about' | '/home'
+  fullPaths: '/' | '' | '/about' | '/home' | '/space/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/about' | '/home'
-  id: '__root__' | '/' | '/_app' | '/_app/about' | '/_app/home'
+  to: '/' | '' | '/about' | '/home' | '/space/$id'
+  id: '__root__' | '/' | '/_app' | '/_app/about' | '/_app/home' | '/space/$id'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  SpaceIdRoute: typeof SpaceIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  SpaceIdRoute: SpaceIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -142,7 +161,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/_app"
+        "/_app",
+        "/space/$id"
       ]
     },
     "/": {
@@ -162,6 +182,9 @@ export const routeTree = rootRoute
     "/_app/home": {
       "filePath": "_app/home.tsx",
       "parent": "/_app"
+    },
+    "/space/$id": {
+      "filePath": "space/$id.tsx"
     }
   }
 }
