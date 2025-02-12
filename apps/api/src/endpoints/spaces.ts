@@ -1,7 +1,6 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
-import { unfurl } from 'unfurl.js'
 import { db } from '~/db/client'
 import { spaces } from '~/db/schema/spaces'
 import { type Space } from '~/db/schema/spaces'

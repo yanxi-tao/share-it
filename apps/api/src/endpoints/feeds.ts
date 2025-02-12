@@ -9,7 +9,7 @@ import { eq } from 'drizzle-orm'
 
 export const feedsRoute = new Hono()
 
-export const createFeedSchema = z.object({
+export const CreateFeedSchema = z.object({
   userId: z.string(),
   spaceId: z.string(),
   verifiedURL: z.string(),
@@ -22,7 +22,7 @@ feedsRoute.get('/:id', async (c) => {
   return c.json(feed[0])
 })
 
-feedsRoute.post('/create', zValidator('json', createFeedSchema), async (c) => {
+feedsRoute.post('/create', zValidator('json', CreateFeedSchema), async (c) => {
   const { userId, spaceId, verifiedURL } = c.req.valid('json')
   const preview = await unfurl(verifiedURL)
 

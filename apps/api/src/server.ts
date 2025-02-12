@@ -4,6 +4,7 @@ import { logger } from 'hono/logger'
 import { auth } from '~/lib/auth'
 import { feedsRoute } from '~/endpoints/feeds'
 import { spacesRoute } from '~/endpoints/spaces'
+import { usersRoute } from '~/endpoints/users'
 
 const app = new Hono()
 
@@ -31,5 +32,6 @@ app.get('/', (c) => {
 
 app.route('/feeds', feedsRoute)
 app.route('/spaces', spacesRoute)
+app.route('/users', usersRoute)
 
 export default app
