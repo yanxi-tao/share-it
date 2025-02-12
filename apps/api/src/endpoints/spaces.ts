@@ -32,8 +32,11 @@ spacesRoute.post(
 
     console.log(space)
 
-    await db.insert(spaces).values(space)
+    const [returnId] = await db
+      .insert(spaces)
+      .values(space)
+      .returning({ id: spaces.id })
 
-    return c.json({ ...space })
+    return c.json(returnId)
   }
 )
