@@ -23,12 +23,12 @@ import { useForm } from 'react-hook-form'
 import { useMutation } from '@tanstack/react-query'
 import { CreateSpaceSchema } from '@/lib/schema'
 import { CreateSpaceSchemaType } from '@/lib/types'
-// import { useNavigate } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 
 const apiUrl = import.meta.env.VITE_API_URL
 
 export const SpaceForm = ({ ownerId }: { ownerId: string }) => {
-  //   const navigate = useNavigate()
+  const navigate = useNavigate()
   const form = useForm<CreateSpaceSchemaType>({
     resolver: zodResolver(CreateSpaceSchema),
     defaultValues: {
@@ -51,7 +51,10 @@ export const SpaceForm = ({ ownerId }: { ownerId: string }) => {
         }),
       })
     },
-    // onSuccess: () => navigate({to: '/spaces'}), // need to add a route for this
+    onSuccess: async (data) => {
+      const response = await data.json()
+      navigate({ to: `/space/${response.id}` })
+    },
   })
 
   function onSubmit(values: CreateSpaceSchemaType) {
