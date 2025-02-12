@@ -5,5 +5,6 @@ export const Route = createFileRoute('/space/$id')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/space/[id]"!</div>
+  const { id: spaceId } = Route.useParams()
+  return <div>Hello {`/space/${spaceId}`}!</div>
 }
