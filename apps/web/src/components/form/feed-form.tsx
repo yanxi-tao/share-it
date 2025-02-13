@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CreateFeedSchemaType } from '@/lib/types'
 import { CreateFeedSchema } from '@/lib/schema'
-
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -25,6 +25,8 @@ export const FeedForm = ({
   userId: string
   spaceId: string
 }) => {
+  const [search, setSearch] = useState('')
+
   const form = useForm<CreateFeedSchemaType>({
     resolver: zodResolver(CreateFeedSchema),
     defaultValues: {
@@ -57,25 +59,26 @@ export const FeedForm = ({
   }
 
   return (
-    <Form {...form}>
+    <Form {...form} className="flex">
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
           name="verifiedURL"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Feed URL</FormLabel>
+              {/* <FormLabel>Link URL</FormLabel> */}
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input
+                  placeholder="New Link or Search"
+                  {...field}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit">Add Link</Button>
       </form>
     </Form>
   )
