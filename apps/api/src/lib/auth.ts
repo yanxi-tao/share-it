@@ -13,6 +13,7 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    autoSignIn: true,
   },
   trustedOrigins: [process.env.FRONTEND_URL!],
 })

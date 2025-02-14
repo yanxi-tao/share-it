@@ -42,26 +42,33 @@ function Home() {
     }
 
     if (Array.isArray(data)) {
-      return data.map((ele: any) => (
-        <FeedCard
-          Key={ele.id}
-          id={ele.id}
-          url={ele.url}
-          imageUrl={ele.imageUrl}
-          title={ele.title}
-          description={ele.description}
-        />
-      ))
+      if (search == '' || search.length >= 2) {
+        return data.map((ele: any) => (
+          <FeedCard
+            Key={ele.id}
+            id={ele.id}
+            url={ele.url}
+            imageUrl={ele.imageUrl}
+            title={ele.title}
+            description={ele.description}
+          />
+        ))
+      } else {
+        return data.map((ele: any) => (
+          <FeedCard
+            Key={ele.id}
+            id={ele.id}
+            url={ele.url}
+            imageUrl={ele.imageUrl}
+            title={ele.title}
+            description={ele.description}
+          />
+        ))
+      }
     }
 
     return <p>No feeds available</p>
   }
-
-  useEffect(() => {
-    console.log(search)
-    if (search.length >= 2) {
-    }
-  }, [search])
 
   return (
     <div>

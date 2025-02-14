@@ -14,6 +14,8 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as AppImport } from './routes/_app'
 import { Route as IndexImport } from './routes/index'
 import { Route as SpaceIdImport } from './routes/space/$id'
+import { Route as AuthSignupImport } from './routes/auth/signup'
+import { Route as AuthSigninImport } from './routes/auth/signin'
 import { Route as AppHomeImport } from './routes/_app/home'
 import { Route as AppAboutImport } from './routes/_app/about'
 
@@ -33,6 +35,18 @@ const IndexRoute = IndexImport.update({
 const SpaceIdRoute = SpaceIdImport.update({
   id: '/space/$id',
   path: '/space/$id',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthSignupRoute = AuthSignupImport.update({
+  id: '/auth/signup',
+  path: '/auth/signup',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthSigninRoute = AuthSigninImport.update({
+  id: '/auth/signin',
+  path: '/auth/signin',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -80,6 +94,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppHomeImport
       parentRoute: typeof AppImport
     }
+    '/auth/signin': {
+      id: '/auth/signin'
+      path: '/auth/signin'
+      fullPath: '/auth/signin'
+      preLoaderRoute: typeof AuthSigninImport
+      parentRoute: typeof rootRoute
+    }
+    '/auth/signup': {
+      id: '/auth/signup'
+      path: '/auth/signup'
+      fullPath: '/auth/signup'
+      preLoaderRoute: typeof AuthSignupImport
+      parentRoute: typeof rootRoute
+    }
     '/space/$id': {
       id: '/space/$id'
       path: '/space/$id'
@@ -109,6 +137,8 @@ export interface FileRoutesByFullPath {
   '': typeof AppRouteWithChildren
   '/about': typeof AppAboutRoute
   '/home': typeof AppHomeRoute
+  '/auth/signin': typeof AuthSigninRoute
+  '/auth/signup': typeof AuthSignupRoute
   '/space/$id': typeof SpaceIdRoute
 }
 
@@ -117,6 +147,8 @@ export interface FileRoutesByTo {
   '': typeof AppRouteWithChildren
   '/about': typeof AppAboutRoute
   '/home': typeof AppHomeRoute
+  '/auth/signin': typeof AuthSigninRoute
+  '/auth/signup': typeof AuthSignupRoute
   '/space/$id': typeof SpaceIdRoute
 }
 
@@ -126,27 +158,55 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/_app/about': typeof AppAboutRoute
   '/_app/home': typeof AppHomeRoute
+  '/auth/signin': typeof AuthSigninRoute
+  '/auth/signup': typeof AuthSignupRoute
   '/space/$id': typeof SpaceIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/about' | '/home' | '/space/$id'
+  fullPaths:
+    | '/'
+    | ''
+    | '/about'
+    | '/home'
+    | '/auth/signin'
+    | '/auth/signup'
+    | '/space/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/about' | '/home' | '/space/$id'
-  id: '__root__' | '/' | '/_app' | '/_app/about' | '/_app/home' | '/space/$id'
+  to:
+    | '/'
+    | ''
+    | '/about'
+    | '/home'
+    | '/auth/signin'
+    | '/auth/signup'
+    | '/space/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/_app/about'
+    | '/_app/home'
+    | '/auth/signin'
+    | '/auth/signup'
+    | '/space/$id'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  AuthSigninRoute: typeof AuthSigninRoute
+  AuthSignupRoute: typeof AuthSignupRoute
   SpaceIdRoute: typeof SpaceIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  AuthSigninRoute: AuthSigninRoute,
+  AuthSignupRoute: AuthSignupRoute,
   SpaceIdRoute: SpaceIdRoute,
 }
 
@@ -162,6 +222,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/_app",
+        "/auth/signin",
+        "/auth/signup",
         "/space/$id"
       ]
     },
@@ -182,6 +244,12 @@ export const routeTree = rootRoute
     "/_app/home": {
       "filePath": "_app/home.tsx",
       "parent": "/_app"
+    },
+    "/auth/signin": {
+      "filePath": "auth/signin.tsx"
+    },
+    "/auth/signup": {
+      "filePath": "auth/signup.tsx"
     },
     "/space/$id": {
       "filePath": "space/$id.tsx"

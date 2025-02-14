@@ -10,7 +10,7 @@ import { Description } from '@radix-ui/react-dialog'
 const apiUrl = import.meta.env.VITE_API_URL
 
 export const Route = createFileRoute('/space/$id')({
-  component: RouteComponent,
+  component: SpacePerId,
 })
 
 function SpacePerId() {
