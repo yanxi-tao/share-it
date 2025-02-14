@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { createAuthClient } from 'better-auth/client'
+import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -31,8 +31,6 @@ export const Route = createFileRoute('/auth/signup')({
   component: signUp,
 })
 
-const authClient = createAuthClient()
-
 function signUp() {
   const navigate = useNavigate()
 
@@ -46,15 +44,12 @@ function signUp() {
     },
   })
 
-  function onSubmit(values: CreateSignUpSchemaType) {
-    console.log(values)
-    authClient.signUp.email(
+  const onSubmit = async (values: CreateSignUpSchemaType) => {
+    const { data } = await authClient.signUp.email(
       {
         email: values.email, // user email address
         password: values.password, // user password -> min 8 characters by default
         name: values.name, // user display name
-
-        callbackURL: '/home', // a url to redirect to after the user verifies their email (optional)
       },
       {
         onRequest: (ctx) => {
