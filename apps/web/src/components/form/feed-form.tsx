@@ -29,8 +29,6 @@ export const FeedForm = ({
   search: string
   setSearch: (value: string) => void
 }) => {
-  export const [search, setSearch] = useState('')
-
   const form = useForm<CreateFeedSchemaType>({
     resolver: zodResolver(CreateFeedSchema),
     defaultValues: {
