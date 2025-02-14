@@ -25,6 +25,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CreateSignUpSchemaType } from '@/lib/types'
 import { CreateSignUpSchema } from '@/lib/schema'
+import { useNavigate } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/auth/signup')({
   component: signUp,
@@ -33,9 +34,7 @@ export const Route = createFileRoute('/auth/signup')({
 const authClient = createAuthClient()
 
 function signUp() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [name, setName] = useState('')
+  const navigate = useNavigate()
 
   const form = useForm<CreateSignUpSchemaType>({
     resolver: zodResolver(CreateSignUpSchema),
@@ -49,7 +48,7 @@ function signUp() {
 
   function onSubmit(values: CreateSignUpSchemaType) {
     console.log(values)
-    const { error } = authClient.signUp.email(
+    authClient.signUp.email(
       {
         email: values.email, // user email address
         password: values.password, // user password -> min 8 characters by default
@@ -63,6 +62,9 @@ function signUp() {
         },
         onSuccess: (ctx) => {
           //redirect to the dashboard or sign in page
+          navigate({
+            to: '/home',
+          })
         },
         onError: (ctx) => {
           // display the error message

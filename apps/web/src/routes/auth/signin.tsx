@@ -25,6 +25,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CreateSignInSchemaType } from '@/lib/types'
 import { CreateSignInSchema } from '@/lib/schema'
+import { useNavigate } from '@tanstack/react-router'
 
 const authClient = createAuthClient()
 
@@ -33,26 +34,7 @@ export const Route = createFileRoute('/auth/signin')({
 })
 
 function signIn() {
-  const { data, error } = authClient.signIn.email(
-    {
-      email: email, // user email address
-      password: password, // user password -> min 8 characters by default
-
-      callbackURL: '/home', // a url to redirect to after the user verifies their email (optional)
-    },
-    {
-      onRequest: (ctx) => {
-        //show loading
-      },
-      onSuccess: (ctx) => {
-        //redirect to the dashboard or sign in page
-      },
-      onError: (ctx) => {
-        // display the error message
-        alert(ctx.error.message)
-      },
-    }
-  )
+  const navigate = useNavigate()
 
   const form = useForm<CreateSignInSchemaType>({
     resolver: zodResolver(CreateSignInSchema),
@@ -64,7 +46,7 @@ function signIn() {
 
   function onSubmit(values: CreateSignInSchemaType) {
     console.log(values)
-    const { error } = authClient.signIn.email(
+    authClient.signIn.email(
       {
         email: values.email, // user email address
         password: values.password, // user password -> min 8 characters by default
@@ -77,6 +59,9 @@ function signIn() {
         },
         onSuccess: (ctx) => {
           //redirect to the dashboard or sign in page
+          navigate({
+            to: '/home',
+          })
         },
         onError: (ctx) => {
           // display the error message
