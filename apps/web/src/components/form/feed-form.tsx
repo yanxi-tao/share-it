@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CreateFeedSchemaType } from '@/lib/types'
 import { CreateFeedSchema } from '@/lib/schema'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -21,11 +21,15 @@ const apiUrl = import.meta.env.VITE_API_URL
 export const FeedForm = ({
   userId,
   spaceId,
+  search,
+  setSearch,
 }: {
   userId: string
   spaceId: string
+  search: string
+  setSearch: (value: string) => void
 }) => {
-  const [search, setSearch] = useState('')
+  export const [search, setSearch] = useState('')
 
   const form = useForm<CreateFeedSchemaType>({
     resolver: zodResolver(CreateFeedSchema),
@@ -59,7 +63,7 @@ export const FeedForm = ({
   }
 
   return (
-    <Form {...form} className="flex">
+    <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
@@ -71,7 +75,10 @@ export const FeedForm = ({
                 <Input
                   placeholder="New Link or Search"
                   {...field}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e) => {
+                    setSearch(e.target.value)
+                    field.onChange(e)
+                  }}
                 />
               </FormControl>
               <FormMessage />

@@ -15,6 +15,7 @@ export const Route = createFileRoute('/_app/home')({
 
 function Home() {
   const { data: session } = authClient.useSession()
+  const [search, setSearch] = useState('')
 
   const { data, error, isLoading } = useQuery({
     queryKey: ['feeds'], //, session?.data?.id
@@ -55,6 +56,12 @@ function Home() {
     return <p>No feeds available</p>
   }
 
+  useEffect(() => {
+    console.log(search)
+    if (search.length >= 2) {
+    }
+  }, [search])
+
   return (
     <div>
       <div className="flex w-full flex-col space-y-4 p-4">
@@ -63,9 +70,11 @@ function Home() {
         <FeedForm
           userId="wJ8bm6qXxAQoZxQVxNuSZ5eaPWTrGnZA"
           spaceId="KQmY6_Bqri"
+          setSearch={setSearch}
+          search={search}
         />
       </div>
-      <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {enumerateFeeds()}
       </div>
     </div>
