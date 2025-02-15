@@ -17,9 +17,11 @@ import { SignUpSchemaType } from '@/lib/types'
 import { authClient } from '@/lib/auth-client'
 
 import { useNavigate } from '@tanstack/react-router'
+import { useState } from 'react'
 
 export const SignUpForm = () => {
   const navigate = useNavigate()
+  const [isPending, setIsPending] = useState(false)
   const form = useForm<SignUpSchemaType>({
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
@@ -39,6 +41,9 @@ export const SignUpForm = () => {
         password: values.password,
       },
       {
+        onRequest: () => {
+          setIsPending(true)
+        },
         onSuccess: () => {
           navigate({ to: '/home' })
         },
@@ -52,9 +57,9 @@ export const SignUpForm = () => {
   return (
     <AuthCardWrapper
       headerLabel="Create an account"
-      //   redirectLabel="Already have an account? Login here"
-      //   redirecrPath="/auth/login"
-      //   showProvider={!isPending}
+      redirectLabel="Already have an account? Login here"
+      redirecrPath="/auth/signin"
+      showProvider={!isPending}
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -114,7 +119,9 @@ export const SignUpForm = () => {
               </FormItem>
             )}
           />
-          <Button type="submit">Submit</Button>
+          <Button type="submit" className="w-full" disabled={isPending}>
+            Create Account
+          </Button>
         </form>
       </Form>
     </AuthCardWrapper>
