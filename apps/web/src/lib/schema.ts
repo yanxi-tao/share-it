@@ -14,7 +14,7 @@ export const CreateFeedSchema = z.object({
     .pipe(z.string().url()),
 })
 
-export const CreateSignUpSchema = z
+export const SignUpSchema = z
   .object({
     name: z.string(),
     email: z.string().email({ message: 'Invalid email address' }).min(5),
@@ -26,7 +26,7 @@ export const CreateSignUpSchema = z
     path: ['repassword'], // Set the path of the error to the repassword field
   })
 
-export const CreateSignInSchema = z.object({
+export const SignInSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }).min(5),
   password: z.string(),
 })

@@ -3,14 +3,14 @@ import { z } from 'zod'
 import {
   CreateSpaceSchema,
   CreateFeedSchema,
-  CreateSignInSchema,
-  CreateSignUpSchema,
+  SignInSchema,
+  SignUpSchema,
 } from '@/lib/schema'
 
 export type CreateSpaceSchemaType = z.infer<typeof CreateSpaceSchema>
 
 export type CreateFeedSchemaType = z.infer<typeof CreateFeedSchema>
 
-export type CreateSignUpSchemaType = z.infer<typeof CreateSignUpSchema>
+export type SignInSchemaType = z.infer<typeof SignInSchema>
 
-export type CreateSignInSchemaType = z.infer<typeof CreateSignInSchema>
+export type SignUpSchemaType = z.infer<typeof SignUpSchema>

@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/sidebar'
 import { ModeToggle } from '@/components/shared/mode-toggle'
 
-export function AppSidebar() {
+export function LeftSidebar() {
   return (
     <Sidebar>
       <SidebarHeader />

@@ -3,7 +3,7 @@ import { SpaceForm } from '@/components/form/space-form'
 import { FeedForm } from '@/components/form/feed-form'
 import { useQuery } from '@tanstack/react-query'
 import { authClient } from '@/lib/auth-client'
-import { FeedCard } from '@/components/app-card'
+import { FeedCard } from '@/components/card/feed-card'
 import { title } from 'process'
 import { Description } from '@radix-ui/react-dialog'
 

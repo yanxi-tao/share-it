@@ -1,6 +1,6 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
-import { AppSidebar } from '@/components/app-sidebar'
+import { LeftSidebar } from '@/components/shared/left-sidebar'
 
 export const Route = createFileRoute('/_app')({
   component: LayoutComponent,
@@ -9,7 +9,7 @@ export const Route = createFileRoute('/_app')({
 function LayoutComponent() {
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <LeftSidebar />
       <main>
         <SidebarTrigger />
         <Outlet />
