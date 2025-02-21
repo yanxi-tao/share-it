@@ -74,10 +74,10 @@ export const FeedForm = ({
                 <Input
                   placeholder="New Link or Search"
                   {...field}
-                  // onChange={(e) => {
-                  //   setSearch(e.target.value)
-                  //   field.onChange(e)
-                  // }}
+                  onChange={(e) => {
+                    setSearch(e.target.value)
+                    field.onChange(e)
+                  }}
                 />
               </FormControl>
               <FormMessage />

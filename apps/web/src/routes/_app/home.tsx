@@ -21,15 +21,13 @@ function Home() {
   const { data, error, isLoading } = useQuery({
     queryKey: ['feeds'], //, session?.data?.id
     queryFn: async () => {
-      const response = await fetch(
-        `${apiUrl}/users/wJ8bm6qXxAQoZxQVxNuSZ5eaPWTrGnZA`
-      ) //${apiUrl}/users/${session?.data?.id}/feeds
+      const response = await fetch(`${apiUrl}/users/${session?.user?.id}`) //${apiUrl}/users/${session?.user?.id}/feeds
       if (!response.ok) {
         throw new Error('Network response was not ok')
       }
       return response.json()
     },
-    // enabled: !!session?.data?.id, // Only run the query if session.data.id is available
+    enabled: !!session?.user?.id, // Only run the query if session.data.id is available
   })
 
   function enumerateFeeds() {
@@ -42,7 +40,7 @@ function Home() {
     }
 
     if (Array.isArray(data)) {
-      if (search == '' || search.length >= 2) {
+      if (search == '' || search.length <= 2) {
         return data.map((ele: any) => (
           <FeedCard
             Key={ele.id}
@@ -54,16 +52,20 @@ function Home() {
           />
         ))
       } else {
-        return data.map((ele: any) => (
-          <FeedCard
-            Key={ele.id}
-            id={ele.id}
-            url={ele.url}
-            imageUrl={ele.imageUrl}
-            title={ele.title}
-            description={ele.description}
-          />
-        ))
+        return data
+          .filter(
+            (ele: any) => ele.title.includes(search) || ele.url.includes(search)
+          )
+          .map((ele: any) => (
+            <FeedCard
+              Key={ele.id}
+              id={ele.id}
+              url={ele.url}
+              imageUrl={ele.imageUrl}
+              title={ele.title}
+              description={ele.description}
+            />
+          ))
       }
     }
 
@@ -73,10 +75,10 @@ function Home() {
   return (
     <div>
       <div className="flex w-full flex-col space-y-4 p-4">
-        <SpaceForm ownerId="wJ8bm6qXxAQoZxQVxNuSZ5eaPWTrGnZA" />
+        <SpaceForm ownerId={session?.user?.id ?? ''} />
         <hr />
         <FeedForm
-          userId="wJ8bm6qXxAQoZxQVxNuSZ5eaPWTrGnZA"
+          userId={session?.user?.id ?? ''}
           spaceId="KQmY6_Bqri"
           setSearch={setSearch}
           search={search}
