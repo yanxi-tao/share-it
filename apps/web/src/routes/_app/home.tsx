@@ -7,6 +7,7 @@ import { FeedCard } from '@/components/card/feed-card'
 import { title } from 'process'
 import { Description } from '@radix-ui/react-dialog'
 import { useState, useEffect } from 'react'
+import Fuse from 'fuse.js'
 
 const apiUrl = import.meta.env.VITE_API_URL
 
@@ -30,6 +31,15 @@ function Home() {
     enabled: !!session?.user?.id, // Only run the query if session.data.id is available
   })
 
+  const options = {
+    isCaseSensitive: false,
+    ignoreDiacritics: false,
+    includeMatches: false,
+    threshold: '0.2',
+    // Search in `author` and in `tags` array
+    keys: ['title', 'url', 'description'],
+  }
+
   function enumerateFeeds() {
     if (isLoading) {
       return <p>Loading...</p>
@@ -40,7 +50,7 @@ function Home() {
     }
 
     if (Array.isArray(data)) {
-      if (search == '' || search.length <= 2) {
+      if (search == '') {
         return data.map((ele: any) => (
           <FeedCard
             Key={ele.id}
@@ -52,20 +62,19 @@ function Home() {
           />
         ))
       } else {
-        return data
-          .filter(
-            (ele: any) => ele.title.includes(search) || ele.url.includes(search)
-          )
-          .map((ele: any) => (
-            <FeedCard
-              Key={ele.id}
-              id={ele.id}
-              url={ele.url}
-              imageUrl={ele.imageUrl}
-              title={ele.title}
-              description={ele.description}
-            />
-          ))
+        const fuse = new Fuse(data, options)
+        const result = fuse.search(search)
+        console.log(result)
+        return result.map(({ item }: any) => (
+          <FeedCard
+            key={item.id}
+            id={item.id}
+            url={item.url}
+            imageUrl={item.imageUrl}
+            title={item.title}
+            description={item.description}
+          />
+        ))
       }
     }
 
