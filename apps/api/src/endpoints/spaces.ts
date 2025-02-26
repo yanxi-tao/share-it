@@ -2,8 +2,10 @@ import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
 import { db } from '~/db/client'
+import { eq } from 'drizzle-orm'
 import { spaces } from '~/db/schema/spaces'
 import { type Space } from '~/db/schema/spaces'
+import { feeds } from '~/db/schema/feeds'
 
 export const spacesRoute = new Hono()
 
@@ -15,6 +17,16 @@ export const createSpaceSchema = z.object({
 
 spacesRoute.get('/', async (c) => {
   return c.text('Hello from spaces')
+})
+
+spacesRoute.get('/:spaceId', async (c) => {
+  const spaceId = c.req.param('spaceId')
+  const spaceFeeds = await db
+    .select()
+    .from(feeds)
+    .where(eq(feeds.spaceId, spaceId))
+
+  return c.json(spaceFeeds)
 })
 
 spacesRoute.post(
