@@ -14,30 +14,34 @@ const apiUrl = import.meta.env.VITE_API_URL;
 export function LeftSidebar() {
   const { data: session } = authClient.useSession();
 
-  // const { data, error, isLoading } = useQuery({
-  //   queryKey: ["spaces"], //, session?.data?.id
-  //   queryFn: async () => {
-  //     const response = await fetch(
-  //       `${apiUrl}/users/${session?.user?.id}/spaces`,
-  //     ); //${apiUrl}/users/${session?.user?.id}/spaces
-  //     if (!response.ok) {
-  //       throw new Error("Network response was not ok");
-  //     }
-  //     return response.json();
-  //   },
-  //   enabled: !!session?.user?.id, // Only run the query if session.data.id is available
-  // });
+  const { data, error, isLoading } = useQuery({
+    queryKey: ["spaces"], //, session?.data?.id
+    queryFn: async () => {
+      const response = await fetch(
+        `${apiUrl}/users/${session?.user?.id}/spaces`,
+      ); //${apiUrl}/users/${session?.user?.id}/spaces
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    },
+    enabled: !!session?.user?.id, // Only run the query if session.data.id is available
+  });
 
   function spaces() {
+    if (isLoading) return <div>Loading...</div>;
+    if (error) return <div>Error loading spaces</div>;
+    if (!data) return null;
+
     return (
       <ul>
-        {/* {data.map((ele: any) => (
+        {data.map((ele: any) => (
           <li key={ele.id}>
             <a href={`/spaces/${ele.id}`}>
               <div>{ele.name}</div>
             </a>
           </li>
-        ))} */}
+        ))}
       </ul>
     );
   }
