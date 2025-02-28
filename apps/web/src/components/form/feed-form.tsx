@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateFeedSchemaType } from "@/lib/types";
 import { CreateFeedSchema } from "@/lib/schema";
 import { useState, useEffect } from "react";
+import { Check, ChevronsUpDown } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -29,7 +30,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useQuery } from "@tanstack/react-query";
-import { s } from "node_modules/better-auth/dist/index-Y--3ocl8";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -52,9 +52,16 @@ export const FeedForm = ({
     defaultValues: {
       userId: userId,
       spaceId: spaceId,
-      verifiedURL: "",
+      verifiedURL: search,
     },
   });
+
+  const handleSpaceSelect = (currentValue: string) => {
+    setValue(currentValue === value ? "" : currentValue);
+    // Update the spaceId in the form
+    form.setValue("spaceId", currentValue);
+    setOpen(false);
+  };
 
   const mutation = useMutation({
     mutationFn: (values: CreateFeedSchemaType) => {
@@ -122,9 +129,9 @@ export const FeedForm = ({
                 className="w-[200px] justify-between"
               >
                 {value
-                  ? data.find((item) => item.value === value)?.label
+                  ? data.find((data) => data.id === value)?.name
                   : "Select Space..."}
-                {/* <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" /> */}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0">
@@ -141,14 +148,14 @@ export const FeedForm = ({
                       data.map((ele: any) => (
                         <CommandItem
                           key={ele.id}
-                          value={ele.name}
-                          onSelect={(currentValue) => {
-                            setValue(
-                              currentValue === value ? "" : currentValue,
-                            );
-                            setOpen(false);
-                          }}
+                          value={ele.id}
+                          onSelect={handleSpaceSelect}
                         >
+                          <Check
+                            className={`mr-2 h-4 w-4 ${
+                              value === ele.id ? "opacity-100" : "opacity-0"
+                            }`}
+                          />
                           {ele.name}
                         </CommandItem>
                       ))
