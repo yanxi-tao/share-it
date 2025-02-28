@@ -13,11 +13,12 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as AppImport } from './routes/_app'
 import { Route as IndexImport } from './routes/index'
-import { Route as SpaceIdImport } from './routes/space/$id'
 import { Route as AuthSignupImport } from './routes/auth/signup'
 import { Route as AuthSigninImport } from './routes/auth/signin'
 import { Route as AppHomeImport } from './routes/_app/home'
+import { Route as AppAccountImport } from './routes/_app/account'
 import { Route as AppAboutImport } from './routes/_app/about'
+import { Route as AppSpaceIdImport } from './routes/_app/space/$id'
 
 // Create/Update Routes
 
@@ -29,12 +30,6 @@ const AppRoute = AppImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const SpaceIdRoute = SpaceIdImport.update({
-  id: '/space/$id',
-  path: '/space/$id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -56,9 +51,21 @@ const AppHomeRoute = AppHomeImport.update({
   getParentRoute: () => AppRoute,
 } as any)
 
+const AppAccountRoute = AppAccountImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AppRoute,
+} as any)
+
 const AppAboutRoute = AppAboutImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppSpaceIdRoute = AppSpaceIdImport.update({
+  id: '/space/$id',
+  path: '/space/$id',
   getParentRoute: () => AppRoute,
 } as any)
 
@@ -87,6 +94,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAboutImport
       parentRoute: typeof AppImport
     }
+    '/_app/account': {
+      id: '/_app/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AppAccountImport
+      parentRoute: typeof AppImport
+    }
     '/_app/home': {
       id: '/_app/home'
       path: '/home'
@@ -108,12 +122,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignupImport
       parentRoute: typeof rootRoute
     }
-    '/space/$id': {
-      id: '/space/$id'
+    '/_app/space/$id': {
+      id: '/_app/space/$id'
       path: '/space/$id'
       fullPath: '/space/$id'
-      preLoaderRoute: typeof SpaceIdImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AppSpaceIdImport
+      parentRoute: typeof AppImport
     }
   }
 }
@@ -122,12 +136,16 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppAboutRoute: typeof AppAboutRoute
+  AppAccountRoute: typeof AppAccountRoute
   AppHomeRoute: typeof AppHomeRoute
+  AppSpaceIdRoute: typeof AppSpaceIdRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppAboutRoute: AppAboutRoute,
+  AppAccountRoute: AppAccountRoute,
   AppHomeRoute: AppHomeRoute,
+  AppSpaceIdRoute: AppSpaceIdRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
@@ -136,20 +154,22 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof AppRouteWithChildren
   '/about': typeof AppAboutRoute
+  '/account': typeof AppAccountRoute
   '/home': typeof AppHomeRoute
   '/auth/signin': typeof AuthSigninRoute
   '/auth/signup': typeof AuthSignupRoute
-  '/space/$id': typeof SpaceIdRoute
+  '/space/$id': typeof AppSpaceIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof AppRouteWithChildren
   '/about': typeof AppAboutRoute
+  '/account': typeof AppAccountRoute
   '/home': typeof AppHomeRoute
   '/auth/signin': typeof AuthSigninRoute
   '/auth/signup': typeof AuthSignupRoute
-  '/space/$id': typeof SpaceIdRoute
+  '/space/$id': typeof AppSpaceIdRoute
 }
 
 export interface FileRoutesById {
@@ -157,10 +177,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/_app/about': typeof AppAboutRoute
+  '/_app/account': typeof AppAccountRoute
   '/_app/home': typeof AppHomeRoute
   '/auth/signin': typeof AuthSigninRoute
   '/auth/signup': typeof AuthSignupRoute
-  '/space/$id': typeof SpaceIdRoute
+  '/_app/space/$id': typeof AppSpaceIdRoute
 }
 
 export interface FileRouteTypes {
@@ -169,6 +190,7 @@ export interface FileRouteTypes {
     | '/'
     | ''
     | '/about'
+    | '/account'
     | '/home'
     | '/auth/signin'
     | '/auth/signup'
@@ -178,6 +200,7 @@ export interface FileRouteTypes {
     | '/'
     | ''
     | '/about'
+    | '/account'
     | '/home'
     | '/auth/signin'
     | '/auth/signup'
@@ -187,10 +210,11 @@ export interface FileRouteTypes {
     | '/'
     | '/_app'
     | '/_app/about'
+    | '/_app/account'
     | '/_app/home'
     | '/auth/signin'
     | '/auth/signup'
-    | '/space/$id'
+    | '/_app/space/$id'
   fileRoutesById: FileRoutesById
 }
 
@@ -199,7 +223,6 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthSigninRoute: typeof AuthSigninRoute
   AuthSignupRoute: typeof AuthSignupRoute
-  SpaceIdRoute: typeof SpaceIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -207,7 +230,6 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthSigninRoute: AuthSigninRoute,
   AuthSignupRoute: AuthSignupRoute,
-  SpaceIdRoute: SpaceIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -223,8 +245,7 @@ export const routeTree = rootRoute
         "/",
         "/_app",
         "/auth/signin",
-        "/auth/signup",
-        "/space/$id"
+        "/auth/signup"
       ]
     },
     "/": {
@@ -234,11 +255,17 @@ export const routeTree = rootRoute
       "filePath": "_app.tsx",
       "children": [
         "/_app/about",
-        "/_app/home"
+        "/_app/account",
+        "/_app/home",
+        "/_app/space/$id"
       ]
     },
     "/_app/about": {
       "filePath": "_app/about.tsx",
+      "parent": "/_app"
+    },
+    "/_app/account": {
+      "filePath": "_app/account.tsx",
       "parent": "/_app"
     },
     "/_app/home": {
@@ -251,8 +278,9 @@ export const routeTree = rootRoute
     "/auth/signup": {
       "filePath": "auth/signup.tsx"
     },
-    "/space/$id": {
-      "filePath": "space/$id.tsx"
+    "/_app/space/$id": {
+      "filePath": "_app/space/$id.tsx",
+      "parent": "/_app"
     }
   }
 }

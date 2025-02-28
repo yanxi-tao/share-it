@@ -5,14 +5,20 @@ import {
   SidebarGroup,
   SidebarHeader,
 } from "@/components/ui/sidebar";
+import { SpaceForm } from "@/components/form/space-form";
 import { ModeToggle } from "@/components/shared/mode-toggle";
 import { useQuery } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
+import { useNavigate } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { CircleUser, Home } from "lucide-react";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export function LeftSidebar() {
+  const navigate = useNavigate();
   const { data: session } = authClient.useSession();
+  console.log("User ID:", session?.user?.id);
 
   const { data, error, isLoading } = useQuery({
     queryKey: ["spaces"], //, session?.data?.id
@@ -25,7 +31,7 @@ export function LeftSidebar() {
       }
       return response.json();
     },
-    enabled: !!session?.user?.id, // Only run the query if session.data.id is available
+    retry: 4,
   });
 
   function spaces() {
@@ -37,9 +43,15 @@ export function LeftSidebar() {
       <ul>
         {data.map((ele: any) => (
           <li key={ele.id}>
-            <a href={`/spaces/${ele.id}`}>
-              <div>{ele.name}</div>
-            </a>
+            <Button
+              onClick={() =>
+                navigate({
+                  to: `/space/${ele.id}`,
+                })
+              }
+            >
+              {ele.name}
+            </Button>
           </li>
         ))}
       </ul>
@@ -49,13 +61,41 @@ export function LeftSidebar() {
   return (
     <Sidebar>
       <SidebarHeader />
+
+      <div className="flex justify-between mr-2 ml-2">
+        <Button
+          onClick={() =>
+            navigate({
+              to: `/home`,
+            })
+          }
+          variant="ghost"
+          className="-mt-1"
+        >
+          <Home className="w-10 h-10" />
+        </Button>
+        <span>Your Spaces</span>
+        <SpaceForm ownerId={session?.user?.id ?? ""} />
+      </div>
       <SidebarContent>
         <SidebarGroup />
         {spaces()}
         <SidebarGroup />
       </SidebarContent>
       <SidebarFooter>
-        <ModeToggle />
+        <div className="flex">
+          <ModeToggle />
+          <Button
+            onClick={() =>
+              navigate({
+                to: `/account`,
+              })
+            }
+            variant="ghost"
+          >
+            <CircleUser />
+          </Button>
+        </div>
       </SidebarFooter>
     </Sidebar>
   );

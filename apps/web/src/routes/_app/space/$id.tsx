@@ -1,32 +1,33 @@
 import { createFileRoute } from "@tanstack/react-router";
-
+import { SpaceForm } from "@/components/form/space-form";
 import { FeedForm } from "@/components/form/feed-form";
 import { useQuery } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
 import { FeedCard } from "@/components/card/feed-card";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Fuse from "fuse.js";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export const Route = createFileRoute("/_app/home")({
-  component: Home,
+export const Route = createFileRoute("/_app/space/$id")({
+  component: SpacePerId,
 });
 
-function Home() {
-  const { data: session } = authClient.useSession();
+function SpacePerId() {
   const [search, setSearch] = useState("");
+  const { id: spaceId } = Route.useParams();
+  const { data: session } = authClient.useSession();
 
   const { data, error, isLoading } = useQuery({
-    queryKey: ["feeds"], //, session?.data?.id
+    queryKey: ["space feeds"], //, session?.user?.id
     queryFn: async () => {
-      const response = await fetch(`${apiUrl}/users/${session?.user?.id}`); //${apiUrl}/users/${session?.user?.id}/feeds
+      const response = await fetch(`${apiUrl}/spaces/${spaceId}`); //${apiUrl}/users/id/space/id/
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       return response.json();
     },
-    enabled: !!session?.user?.id, // Only run the query if session.data.id is available
+    enabled: !!session?.user?.id, // Only run the query if session.user.id is available
   });
 
   const options = {
@@ -56,7 +57,7 @@ function Home() {
             url={ele.url}
             imageUrl={ele.imageUrl}
             title={ele.title}
-            //description={ele.description}
+            description={ele.description}
           />
         ));
       } else {
@@ -70,7 +71,7 @@ function Home() {
             url={item.url}
             imageUrl={item.imageUrl}
             title={item.title}
-            // description={item.description}
+            description={item.description}
           />
         ));
       }
@@ -84,13 +85,13 @@ function Home() {
       <div className="flex w-full flex-col space-y-4 p-4">
         <FeedForm
           userId={session?.user?.id ?? ""}
-          spaceId=""
+          spaceId={spaceId}
           setSearch={setSearch}
           search={search}
         />
       </div>
       <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        <div className="flex flex-col space-y-4 p-3">{enumerateFeeds()}</div>
+        {enumerateFeeds()}
       </div>
     </div>
   );

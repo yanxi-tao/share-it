@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -6,7 +6,7 @@ import {
   CardFooter,
   CardHeader,
   // CardTitle,
-} from '@/components/ui/card'
+} from "@/components/ui/card";
 
 export const FeedCard = ({
   id,
@@ -15,29 +15,30 @@ export const FeedCard = ({
   url,
   imageUrl,
 }: {
-  id: string
-  title: string
-  description: string
-  url: string
-  imageUrl: string
+  id: string;
+  title: string;
+  description: string;
+  url: string;
+  imageUrl: string;
 }) => {
   return (
-    <Card className="w-[350px]" id={id}>
-      <CardHeader>
-        <img src={imageUrl} alt="Dinosaur" />
-      </CardHeader>
-      <CardContent>
-        <div className="grid w-full items-center gap-4">
-          <span className="bold text-lg">{title}</span>
-          <span>{description}</span>
-        </div>
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        <Button variant="outline">Cancel</Button>
-        <a href={url}>
-          <Button>Open</Button>
-        </a>
-      </CardFooter>
-    </Card>
-  )
-}
+    <a href={url}>
+      <Card className="w-[350px]" id={id}>
+        <CardHeader>
+          {imageUrl ? (
+            <img src={imageUrl} className="h-full object-cover w-full" />
+          ) : (
+            <div className="h-[200px] bg-gray-200" />
+          )}
+        </CardHeader>
+        <CardContent>
+          <div className="grid w-full items-center gap-4">
+            <span className="bold text-lg text-center">{title}</span>
+            {/* <span>{description}</span> */}
+          </div>
+        </CardContent>
+        <CardFooter className="flex justify-between"></CardFooter>
+      </Card>
+    </a>
+  );
+};

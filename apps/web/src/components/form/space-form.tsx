@@ -6,7 +6,7 @@ import {
   DialogTitle,
   DialogTrigger,
   // DialogFooter,
-} from '@/components/ui/dialog'
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -15,56 +15,59 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { useMutation } from '@tanstack/react-query'
-import { CreateSpaceSchema } from '@/lib/schema'
-import { CreateSpaceSchemaType } from '@/lib/types'
-import { useNavigate } from '@tanstack/react-router'
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { CreateSpaceSchema } from "@/lib/schema";
+import { CreateSpaceSchemaType } from "@/lib/types";
+import { useNavigate } from "@tanstack/react-router";
+import { Plus } from "lucide-react";
 
-const apiUrl = import.meta.env.VITE_API_URL
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export const SpaceForm = ({ ownerId }: { ownerId: string }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const form = useForm<CreateSpaceSchemaType>({
     resolver: zodResolver(CreateSpaceSchema),
     defaultValues: {
-      name: '',
-      description: '',
+      name: "",
+      description: "",
     },
-  })
+  });
 
   const mutation = useMutation({
     mutationFn: (values: CreateSpaceSchemaType) => {
       return fetch(`${apiUrl}/spaces/create`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: values.name,
           description: values.description,
           ownerId,
         }),
-      })
+      });
     },
     onSuccess: async (data) => {
-      const response = await data.json()
-      navigate({ to: `/space/${response.id}` })
+      const response = await data.json();
+      navigate({ to: `/space/${response.id}` });
     },
-  })
+  });
 
   function onSubmit(values: CreateSpaceSchemaType) {
-    console.log(values)
-    mutation.mutate(values)
+    console.log(values);
+    mutation.mutate(values);
   }
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button type="submit">New Space</Button>
+        <Button type="submit" variant="ghost" size="icon" className="-m-1">
+          <Plus className="" />
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -112,5 +115,5 @@ export const SpaceForm = ({ ownerId }: { ownerId: string }) => {
         </Form>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
