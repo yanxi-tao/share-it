@@ -76,7 +76,13 @@ export const FeedForm = ({
         }),
       });
     },
-    //onSuccess: () => navigate({to: '/some_url'}), // need to add a route for this
+    onSuccess: () => {
+      form.reset();
+      // Clear the search state
+      setSearch("");
+      // Clear the space selection if needed
+      setValue("");
+    },
   });
 
   function onSubmit(values: CreateFeedSchemaType) {
