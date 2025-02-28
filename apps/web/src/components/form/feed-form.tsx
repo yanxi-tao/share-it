@@ -58,7 +58,6 @@ export const FeedForm = ({
 
   const handleSpaceSelect = (currentValue: string) => {
     setValue(currentValue === value ? "" : currentValue);
-    // Update the spaceId in the form
     form.setValue("spaceId", currentValue);
     setOpen(false);
   };
@@ -72,7 +71,7 @@ export const FeedForm = ({
         },
         body: JSON.stringify({
           userId,
-          spaceId,
+          spaceId: values.spaceId,
           verifiedURL: values.verifiedURL,
         }),
       });
