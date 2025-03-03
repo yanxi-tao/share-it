@@ -13,7 +13,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 
 import { Link, Plus, Search, Space, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Session } from "inspector/promises";
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -29,6 +29,7 @@ export const AddPeopleForm = ({
   isOpen,
   onOpenChange,
 }: {
+  userId: string;
   spaceId: string;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
@@ -42,6 +43,14 @@ export const AddPeopleForm = ({
       prevList.filter((person) => person.email !== personToRemove.email),
     );
   };
+
+  useEffect(() => {
+    if (!isOpen) {
+      setEmail("");
+      setSearchTriggered(false);
+      setListPeople([]);
+    }
+  }, [isOpen]);
 
   const searchUserMutation = useMutation({
     mutationFn: async (id: string) => {
@@ -87,15 +96,17 @@ export const AddPeopleForm = ({
 
   const handleSearch = () => {
     setSearchTriggered(true);
-    if (isSuccess) {
+  };
+
+  useEffect(() => {
+    if (isSuccess && data) {
       if (!listPeople.some((person) => person.email === email)) {
         setListPeople((prevList) => [...prevList, { email, id: data.id }]);
       }
       setSearchTriggered(false);
       setEmail("");
-      console.log(listPeople);
     }
-  };
+  }, [isSuccess, data]);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -126,7 +137,7 @@ export const AddPeopleForm = ({
           </div>
           {listPeople.length > 0 && (
             <ul className="space-y-2">
-              {listPeople.map((person, index) => (
+              {listPeople.map((person) => (
                 <li
                   key={person.id}
                   className="flex items-center justify-between p-2 rounded"
@@ -155,43 +166,5 @@ export const AddPeopleForm = ({
         )}
       </DialogContent>
     </Dialog>
-
-    //   <DialogContent>
-    //     <DialogHeader>
-    //       <DialogTitle>Wanna add some people to space</DialogTitle>{" "}
-    //       {/* add dynamic space name */}
-    //       <DialogDescription>Add people to your space</DialogDescription>
-    //     </DialogHeader>
-    //     <Form {...form}>
-    //       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-    //         <FormField
-    //           control={form.control}
-    //           name="people"
-    //           render={({ field }) => (
-    //             <FormItem>
-    //               <FormLabel>Space Name</FormLabel>
-    //               <FormControl>
-    //                 <Input
-    //                   placeholder="email@email.com"
-    //                   {...field}
-    //                   className="justify-between"
-    //                 >
-    //                   <Search onClick={() => {}} />
-    //                 </Input>
-    //               </FormControl>
-    //               <FormDescription>
-    //                 {" "}
-    //                 {/* add dynamic list of people in space */}
-    //                 Space people
-    //               </FormDescription>
-    //               <FormMessage />
-    //             </FormItem>
-    //           )}
-    //         />
-    //         <Button type="submit">Submit</Button>
-    //       </form>
-    //     </Form>
-    //   </DialogContent>
-    // </Dialog>
   );
 };
