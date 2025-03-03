@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SpaceForm } from "@/components/form/space-form";
 import { FeedForm } from "@/components/form/feed-form";
 import { useQuery } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";

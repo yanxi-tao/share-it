@@ -8,15 +8,19 @@ import {
 import { SpaceForm } from "@/components/form/space-form";
 import { ModeToggle } from "@/components/shared/mode-toggle";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { CircleUser, Home, UserPlus } from "lucide-react";
-// import { AddPeopleForm } from "@/components/form/add-people";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export function LeftSidebar() {
+interface LeftSidebarProps {
+  setShowAddPeopleForm: (spaceId: string, userId: string) => void;
+}
+
+export function LeftSidebar({ setShowAddPeopleForm }: LeftSidebarProps) {
   const navigate = useNavigate();
   const { data: session } = authClient.useSession();
   console.log("User ID:", session?.user?.id);
@@ -26,13 +30,13 @@ export function LeftSidebar() {
     queryFn: async () => {
       const response = await fetch(
         `${apiUrl}/users/${session?.user?.id}/spaces`,
-      ); //${apiUrl}/users/${session?.user?.id}/spaces
+      );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       return response.json();
     },
-    retry: 4,
+    enabled: !!session?.user?.id,
   });
 
   function spaces() {
@@ -61,11 +65,7 @@ export function LeftSidebar() {
               <Button
                 className="rounded-4xl"
                 variant="ghost"
-                // onClick={() =>
-                //   AddPeopleForm({
-                //     spaceId: ele.id,
-                //   })
-                // }
+                onClick={() => setShowAddPeopleForm(ele.id, session.user.id)}
               >
                 <UserPlus />
               </Button>

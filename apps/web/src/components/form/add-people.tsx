@@ -1,131 +1,197 @@
-// import {
-//   Dialog,
-//   DialogContent,
-//   DialogDescription,
-//   DialogHeader,
-//   DialogTitle,
-//   DialogTrigger,
-//   // DialogFooter,
-// } from "@/components/ui/dialog";
-// import {
-//   Form,
-//   FormControl,
-//   FormDescription,
-//   FormField,
-//   FormItem,
-//   FormLabel,
-//   FormMessage,
-// } from "@/components/ui/form";
-// import { Input } from "@/components/ui/input";
-// import { Button } from "@/components/ui/button";
-// import { zodResolver } from "@hookform/resolvers/zod";
-// import { useForm } from "react-hook-form";
-// import { useMutation } from "@tanstack/react-query";
-// import { CreatePeopleSchema } from "@/lib/schema";
-// import { CreatePeopleSchemaType } from "@/lib/types";
-// import { useNavigate } from "@tanstack/react-router";
-// import { Plus } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  // DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
-// const apiUrl = import.meta.env.VITE_API_URL;
+import { Link, Plus, Search, Space, X } from "lucide-react";
+import { useState } from "react";
+import { Session } from "inspector/promises";
 
-// export const AddPeopleForm = ({ spaceId }: { spaceId: string }) => {
-//   const navigate = useNavigate();
-//   const form = useForm<CreatePeopleSchemaType>({
-//     resolver: zodResolver(CreatePeopleSchema),
-//     defaultValues: {
-//       spaceId: spaceId,
-//       people: [""],
-//     },
-//   });
+const apiUrl = import.meta.env.VITE_API_URL;
 
-//   const { data, error, isLoading } = useQuery({
-//     queryKey: ["feeds"], //, session?.data?.id
-//     queryFn: async () => {
-//       const response = await fetch(`${apiUrl}/users/`); //${apiUrl}/users/${session?.user?.id}/feeds
-//       if (!response.ok) {
-//         throw new Error("Network response was not ok");
-//       }
-//       return response.json();
-//     },
-//     enabled: !!session?.user?.id, // Only run the query if session.data.id is available
-//   });
+interface Person {
+  email: string;
+  id: string;
+}
 
-//   const mutation = useMutation({
-//     mutationFn: (values: CreateSpaceSchemaType) => {
-//       return fetch(`${apiUrl}/spaces/add/${spaceId}`, {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           name: values.name,
-//           description: values.description,
-//         }),
-//       });
-//     },
-//     onSuccess: async (data) => {
-//       const response = await data.json();
-//       navigate({ to: `/space/${response.id}` });
-//     },
-//   });
+export const AddPeopleForm = ({
+  userId,
+  spaceId,
+  isOpen,
+  onOpenChange,
+}: {
+  spaceId: string;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+}) => {
+  const [email, setEmail] = useState("");
+  const [searchTriggered, setSearchTriggered] = useState(false);
+  const [listPeople, setListPeople] = useState<Person[]>([]); // Change to store Person objects
 
-//   function onSubmit(values: CreateSpaceSchemaType) {
-//     console.log(values);
-//     mutation.mutate(values);
-//   }
+  const removePerson = (personToRemove: Person) => {
+    setListPeople((prevList) =>
+      prevList.filter((person) => person.email !== personToRemove.email),
+    );
+  };
 
-//   return (
-//     <Dialog>
-//       <DialogTrigger asChild>
-//         <Button type="submit" variant="ghost" size="icon" className="-m-1">
-//           <Plus className="" />
-//         </Button>
-//       </DialogTrigger>
-//       <DialogContent>
-//         <DialogHeader>
-//           <DialogTitle>Wanna create some spacey</DialogTitle>
-//           <DialogDescription>
-//             Create a new space to share with your friends
-//           </DialogDescription>
-//         </DialogHeader>
-//         <Form {...form}>
-//           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-//             <FormField
-//               control={form.control}
-//               name="name"
-//               render={({ field }) => (
-//                 <FormItem>
-//                   <FormLabel>Space Name</FormLabel>
-//                   <FormControl>
-//                     <Input placeholder="some namy" {...field} />
-//                   </FormControl>
-//                   <FormDescription>
-//                     This is your space's public display name.
-//                   </FormDescription>
-//                   <FormMessage />
-//                 </FormItem>
-//               )}
-//             />
-//             <FormField
-//               control={form.control}
-//               name="description"
-//               render={({ field }) => (
-//                 <FormItem>
-//                   <FormLabel>Space Description</FormLabel>
-//                   <FormControl>
-//                     <Input placeholder="some descriptionnnn" {...field} />
-//                   </FormControl>
-//                   <FormDescription>
-//                     wanna explain what this space is about?
-//                   </FormDescription>
-//                   <FormMessage />
-//                 </FormItem>
-//               )}
-//             />
-//             <Button type="submit">Submit</Button>
-//           </form>
-//         </Form>
-//       </DialogContent>
-//     </Dialog>
-//   );
-// };
+  const searchUserMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`${apiUrl}/invites/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          inviterId: userId,
+          guestId: id,
+          spaceId: spaceId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("User search failed");
+      }
+
+      return response.json();
+    },
+  });
+
+  function inviteAllUsers() {
+    listPeople.forEach((person) => {
+      searchUserMutation.mutate(person.id, {
+        onSuccess: (data, variables, context) => {},
+      });
+    });
+  }
+
+  const { isSuccess, error, isLoading, data } = useQuery({
+    queryKey: ["user", email],
+    queryFn: async () => {
+      const response = await fetch(`${apiUrl}/users/${email}`);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    },
+    enabled: searchTriggered, // Only run the query when search is triggered
+  });
+
+  const handleSearch = () => {
+    setSearchTriggered(true);
+    if (isSuccess) {
+      if (!listPeople.some((person) => person.email === email)) {
+        setListPeople((prevList) => [...prevList, { email, id: data.id }]);
+      }
+      setSearchTriggered(false);
+      setEmail("");
+      console.log(listPeople);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSearch();
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <div className="space-y-4">
+          <h2>Add People to Space</h2>
+          <div className="flex gap-2">
+            <Input
+              type="email"
+              placeholder="Enter email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyUp={handleKeyPress}
+            />
+            <Button
+              onClick={handleSearch}
+              disabled={isLoading || !email.trim()}
+            >
+              <Search />
+            </Button>
+          </div>
+          {listPeople.length > 0 && (
+            <ul className="space-y-2">
+              {listPeople.map((person, index) => (
+                <li
+                  key={person.id}
+                  className="flex items-center justify-between p-2 rounded"
+                >
+                  <span>{person.email}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removePerson(person)}
+                    className="text-red-500 hover:bg-red-100"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {error && <div className="text-red-500">Error: User not found</div>}
+          {isLoading && <div className="text-blue-500">Searching...</div>}
+        </div>
+        {listPeople.length > 0 && (
+          <Button type="submit" onClick={inviteAllUsers}>
+            Add People
+          </Button>
+        )}
+      </DialogContent>
+    </Dialog>
+
+    //   <DialogContent>
+    //     <DialogHeader>
+    //       <DialogTitle>Wanna add some people to space</DialogTitle>{" "}
+    //       {/* add dynamic space name */}
+    //       <DialogDescription>Add people to your space</DialogDescription>
+    //     </DialogHeader>
+    //     <Form {...form}>
+    //       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+    //         <FormField
+    //           control={form.control}
+    //           name="people"
+    //           render={({ field }) => (
+    //             <FormItem>
+    //               <FormLabel>Space Name</FormLabel>
+    //               <FormControl>
+    //                 <Input
+    //                   placeholder="email@email.com"
+    //                   {...field}
+    //                   className="justify-between"
+    //                 >
+    //                   <Search onClick={() => {}} />
+    //                 </Input>
+    //               </FormControl>
+    //               <FormDescription>
+    //                 {" "}
+    //                 {/* add dynamic list of people in space */}
+    //                 Space people
+    //               </FormDescription>
+    //               <FormMessage />
+    //             </FormItem>
+    //           )}
+    //         />
+    //         <Button type="submit">Submit</Button>
+    //       </form>
+    //     </Form>
+    //   </DialogContent>
+    // </Dialog>
+  );
+};
