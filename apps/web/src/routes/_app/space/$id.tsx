@@ -81,7 +81,7 @@ function SpacePerId() {
   }
 
   return (
-    <div>
+    <>
       <div className="flex w-full flex-col space-y-4 p-4">
         <FeedForm
           userId={session?.user?.id ?? ""}
@@ -93,6 +93,6 @@ function SpacePerId() {
       <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {enumerateFeeds()}
       </div>
-    </div>
+    </>
   );
 }

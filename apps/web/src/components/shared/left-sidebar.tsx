@@ -11,7 +11,8 @@ import { useQuery } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { CircleUser, Home } from "lucide-react";
+import { CircleUser, Home, UserPlus } from "lucide-react";
+// import { AddPeopleForm } from "@/components/form/add-people";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -43,15 +44,32 @@ export function LeftSidebar() {
       <ul>
         {data.map((ele: any) => (
           <li key={ele.id}>
-            <Button
-              onClick={() =>
-                navigate({
-                  to: `/space/${ele.id}`,
-                })
-              }
-            >
-              {ele.name}
-            </Button>
+            <div className="flex">
+              <div className="items-center w-full">
+                <Button
+                  variant="ghost"
+                  className="w-full "
+                  onClick={() =>
+                    navigate({
+                      to: `/space/${ele.id}`,
+                    })
+                  }
+                >
+                  {ele.name}
+                </Button>
+              </div>
+              <Button
+                className="rounded-4xl"
+                variant="ghost"
+                // onClick={() =>
+                //   AddPeopleForm({
+                //     spaceId: ele.id,
+                //   })
+                // }
+              >
+                <UserPlus />
+              </Button>
+            </div>
           </li>
         ))}
       </ul>
