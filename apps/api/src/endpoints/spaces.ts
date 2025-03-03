@@ -1,53 +1,53 @@
-import { Hono } from 'hono'
-import { zValidator } from '@hono/zod-validator'
-import { z } from 'zod'
-import { db } from '~/db/client'
-import { eq } from 'drizzle-orm'
-import { spaces } from '~/db/schema/spaces'
-import { type Space } from '~/db/schema/spaces'
-import { feeds } from '~/db/schema/feeds'
+import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
+import { z } from "zod";
+import { db } from "~/db/client";
+import { eq } from "drizzle-orm";
+import { spaces } from "~/db/schema/spaces";
+import { type Space } from "~/db/schema/spaces";
+import { feeds } from "~/db/schema/feeds";
 
-export const spacesRoute = new Hono()
+export const spacesRoute = new Hono();
 
-export const createSpaceSchema = z.object({
+export const CreateSpaceSchema = z.object({
   name: z.string(),
   description: z.optional(z.string()),
   ownerId: z.string(),
-})
+});
 
-spacesRoute.get('/', async (c) => {
-  return c.text('Hello from spaces')
-})
+spacesRoute.get("/", async (c) => {
+  return c.text("Hello from spaces");
+});
 
-spacesRoute.get('/:spaceId', async (c) => {
-  const spaceId = c.req.param('spaceId')
+spacesRoute.get("/:spaceId", async (c) => {
+  const spaceId = c.req.param("spaceId");
   const spaceFeeds = await db
     .select()
     .from(feeds)
-    .where(eq(feeds.spaceId, spaceId))
+    .where(eq(feeds.spaceId, spaceId));
 
-  return c.json(spaceFeeds)
-})
+  return c.json(spaceFeeds);
+});
 
 spacesRoute.post(
-  '/create',
-  zValidator('json', createSpaceSchema),
+  "/create",
+  zValidator("json", CreateSpaceSchema),
   async (c) => {
-    const { name, description, ownerId } = c.req.valid('json')
+    const { name, description, ownerId } = c.req.valid("json");
 
     const space: Space = {
       name,
       description,
       ownerId,
-    }
+    };
 
-    console.log(space)
+    console.log(space);
 
     const [returnId] = await db
       .insert(spaces)
       .values(space)
-      .returning({ id: spaces.id })
+      .returning({ id: spaces.id });
 
-    return c.json(returnId)
-  }
-)
+    return c.json(returnId);
+  },
+);
