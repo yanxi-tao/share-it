@@ -14,5 +14,3 @@ export type CreateFeedSchemaType = z.infer<typeof CreateFeedSchema>;
 export type SignInSchemaType = z.infer<typeof SignInSchema>;
 
 export type SignUpSchemaType = z.infer<typeof SignUpSchema>;
-
-export type CreatePeopleSchemaType = z.infer<typeof CreatePeopleSchema>;

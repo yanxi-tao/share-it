@@ -5,26 +5,26 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Link } from '@tanstack/react-router'
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Link } from "@tanstack/react-router";
 
-import { FcGoogle } from 'react-icons/fc'
-import { FaGithub } from 'react-icons/fa'
+import { FcGoogle } from "react-icons/fc";
+import { FaGithub } from "react-icons/fa";
 
 type AuthCardWrapperProps = {
-  children: React.ReactNode
-  headerLabel: string
-  redirectLabel: string
-  redirecrPath: string
-  showProvider?: boolean
-}
+  children: React.ReactNode;
+  headerLabel: string;
+  redirectLabel: string;
+  redirectPath: string;
+  showProvider?: boolean;
+};
 
 export const AuthCardWrapper = ({
   children,
   headerLabel,
   redirectLabel,
-  redirecrPath,
+  redirectPath,
   showProvider = true,
 }: AuthCardWrapperProps) => {
   return (
@@ -36,12 +36,12 @@ export const AuthCardWrapper = ({
       {showProvider && <AuthProviders />}
       <CardFooter className="justify-center">
         <Button variant="link" asChild>
-          <Link to={redirecrPath}>{redirectLabel}</Link>
+          <Link to={redirectPath}>{redirectLabel}</Link>
         </Button>
       </CardFooter>
     </Card>
-  )
-}
+  );
+};
 
 const AuthProviders = () => {
   return (
@@ -55,5 +55,5 @@ const AuthProviders = () => {
         Github
       </Button>
     </CardFooter>
-  )
-}
+  );
+};

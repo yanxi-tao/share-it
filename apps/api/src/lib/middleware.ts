@@ -1,10 +1,10 @@
-import { createMiddleware } from "hono/factory";
-import { auth } from "./auth";
+import { createMiddleware } from 'hono/factory'
+import { auth } from './auth'
 
 export const authInjection = createMiddleware(async (c, next) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers });
+  const session = await auth.api.getSession({ headers: c.req.raw.headers })
 
-  console.log("api session", session);
+  console.log('api session', session)
 
   // if (!session) {
   //   c.set("user", null);
@@ -14,5 +14,5 @@ export const authInjection = createMiddleware(async (c, next) => {
 
   // c.set("user", session.user);
   // c.set("session", session.session);
-  await next();
-});
+  await next()
+})

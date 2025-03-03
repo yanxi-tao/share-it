@@ -6,34 +6,34 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { AuthCardWrapper } from '@/components/auth/auth-card-wrapper'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { SignUpSchema } from '@/lib/schema'
-import { SignUpSchemaType } from '@/lib/types'
-import { authClient } from '@/lib/auth-client'
+} from "@/components/ui/form";
+import { AuthCardWrapper } from "@/components/auth/auth-card-wrapper";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { SignUpSchema } from "@/lib/schema";
+import { SignUpSchemaType } from "@/lib/types";
+import { authClient } from "@/lib/auth-client";
 
-import { useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 
 export const SignUpForm = () => {
-  const navigate = useNavigate()
-  const [isPending, setIsPending] = useState(false)
+  const navigate = useNavigate();
+  const [isPending, setIsPending] = useState(false);
   const form = useForm<SignUpSchemaType>({
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      repassword: '',
+      name: "",
+      email: "",
+      password: "",
+      repassword: "",
     },
-  })
+  });
 
   const onSubmit = async (values: SignUpSchemaType) => {
-    console.log(values)
+    console.log(values);
     await authClient.signUp.email(
       {
         name: values.name,
@@ -42,23 +42,23 @@ export const SignUpForm = () => {
       },
       {
         onRequest: () => {
-          setIsPending(true)
+          setIsPending(true);
         },
         onSuccess: () => {
-          navigate({ to: '/home' })
+          navigate({ to: "/home" });
         },
         onError: (ctx) => {
-          alert(ctx.error.message)
+          alert(ctx.error.message);
         },
-      }
-    )
-  }
+      },
+    );
+  };
 
   return (
     <AuthCardWrapper
       headerLabel="Create an account"
       redirectLabel="Already have an account? Login here"
-      redirecrPath="/auth/signin"
+      redirectPath="/auth/signin"
       showProvider={!isPending}
     >
       <Form {...form}>
@@ -125,5 +125,5 @@ export const SignUpForm = () => {
         </form>
       </Form>
     </AuthCardWrapper>
-  )
-}
+  );
+};
