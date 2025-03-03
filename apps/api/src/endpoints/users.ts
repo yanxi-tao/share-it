@@ -11,9 +11,9 @@ usersRoute.get("/", async (c) => {
   return c.text("Hello from users");
 });
 
-usersRoute.get("/search/:userId", async (c) => {
-  const userId = c.req.param("userId");
-  const user = await db.select().from(users).where(eq(users.id, userId));
+usersRoute.get("/search/:userEmail", async (c) => {
+  const userEmail = c.req.param("userEmail");
+  const user = await db.select().from(users).where(eq(users.email, userEmail));
 
   return c.json(user);
 });
