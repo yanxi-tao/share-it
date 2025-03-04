@@ -81,7 +81,7 @@ export function LeftSidebar({
   }
 
   return (
-    <Sidebar>
+    <Sidebar className="bg-background text-foreground">
       <SidebarHeader />
 
       <div className="flex justify-between mr-2 ml-2">

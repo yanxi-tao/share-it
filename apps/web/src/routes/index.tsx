@@ -54,7 +54,7 @@ function Index() {
 
   return (
     <>
-      <div className="fixed top-0 flex w-full justify-between items-center p-4 bg-background text-foreground">
+      <div className="fixed top-0 flex-row flew-grow justify-between items-center p-4 bg-background text-foreground">
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
@@ -88,8 +88,8 @@ function Index() {
         </NavigationMenu>
       </div>
 
-      <div className="flex justify-center items-center flex-col space-y-7 p-2 mx-auto max-w-xxl px-4 bg-background text-foreground h-200">
-        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl text-center py-8">
+      <div className="flex justify-center items-center flex-grow flex-col space-y-5 p-4 mx-auto max-w-xxl px-4 bg-background text-foreground">
+        <h1 className="flex scroll-m-20 text-4xl font-extrabold tracking-tight text-center py-4 px-50">
           Share and organize links effortlessly on a single, collaborative hub
           with Share-It.
         </h1>
