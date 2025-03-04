@@ -80,7 +80,7 @@ function Home() {
   }
 
   return (
-    <div className="min-h-screen w-full p-4">
+    <div className="min-h-screen w-full p-4 bg-background text-foreground flex-grow">
       <div className="mb-4">
         <FeedForm
           userId={session?.user?.id ?? ''}

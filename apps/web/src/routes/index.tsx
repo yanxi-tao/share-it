@@ -15,6 +15,7 @@ import {
   NavigationMenuTrigger,
   NavigationMenuViewport,
 } from '@/components/ui/navigation-menu'
+import { buttonVariants } from '@/components/ui/button'
 
 const apiUrl = import.meta.env.VITE_API_URL
 
@@ -32,49 +33,44 @@ function Index() {
   })
 
   //drop down components
-  const components: { title: string; href: string; description: string }[] = [
+  const components: { title: string; href: string }[] = [
     {
-      title: 'Alert Dialog',
-      href: '/docs/primitives/alert-dialog',
-      description:
-        'A modal dialog that interrupts the user with important content and expects a response.',
+      title: 'Home',
+      href: '/home',
     },
     {
-      title: 'Hover Card',
+      title: 'Profile',
       href: '/docs/primitives/hover-card',
-      description:
-        'For sighted users to preview content available behind a link.',
     },
     {
-      title: 'Progress',
+      title: 'Settings',
       href: '/docs/primitives/progress',
-      description:
-        'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.',
     },
     {
-      title: 'Scroll-area',
-      href: '/docs/primitives/scroll-area',
-      description: 'Visually or semantically separates content.',
-    },
-    {
-      title: 'Tabs',
-      href: '/docs/primitives/tabs',
-      description:
-        'A set of layered sections of content—known as tab panels—that are displayed one at a time.',
-    },
-    {
-      title: 'Tooltip',
-      href: '/docs/primitives/tooltip',
-      description:
-        'A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.',
+      title: 'Logout',
+      href: '/auth/signin',
     },
   ]
 
   return (
     <>
-      <div className="fixed top-0 flex justify-center items-center flex-col space-y-2 p-2">
+      <div className="fixed top-0 flex w-full justify-between items-center p-4 bg-background text-foreground">
         <NavigationMenu>
           <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Profile</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="grid w-[150px] gap-3 p-4">
+                  {components.map((component) => (
+                    <ListItem
+                      key={component.title}
+                      title={component.title}
+                      href={component.href}
+                    ></ListItem>
+                  ))}
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuTrigger>Item One</NavigationMenuTrigger>
               <NavigationMenuContent>
@@ -82,33 +78,24 @@ function Index() {
               </NavigationMenuContent>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuTrigger>Components</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                  {components.map((component) => (
-                    <ListItem
-                      key={component.title}
-                      title={component.title}
-                      href={component.href}
-                    >
-                      {component.description}
-                    </ListItem>
-                  ))}
-                </ul>
-              </NavigationMenuContent>
+              <Link to="/auth/signup">
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  Documentation
+                </NavigationMenuLink>
+              </Link>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
       </div>
 
-      <div className=" flex justify-center items-center flex-col space-y-2 p-2">
-        <h3>
+      <div className="flex justify-center items-center flex-col space-y-7 p-2 mx-auto max-w-xxl px-4 bg-background text-foreground h-200">
+        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl text-center py-8">
           Share and organize links effortlessly on a single, collaborative hub
-          with Share-It
-        </h3>
-        <Button>Working Shadcn + Tailwind v4</Button>
-        <h3>Server Data</h3>
-        <span>{data}</span>
+          with Share-It.
+        </h1>
+        <Button size="xl" variant="outline">
+          <Link to="/auth/signup">Sign up Here</Link>
+        </Button>
       </div>
     </>
   )
