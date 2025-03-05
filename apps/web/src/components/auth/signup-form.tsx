@@ -62,7 +62,10 @@ export const SignUpForm = () => {
       showProvider={!isPending}
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-8 bg-background text-foreground"
+        >
           <FormField
             control={form.control}
             name="name"
