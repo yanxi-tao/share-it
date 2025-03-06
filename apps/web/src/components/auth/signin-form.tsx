@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import { SignInSchema } from "@/lib/schema";
 import { SignInSchemaType } from "@/lib/types";
 import { authClient } from "@/lib/auth-client";
-
+import { LoaderCircle } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -90,9 +90,15 @@ export const SignInForm = () => {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full" disabled={isPending}>
-            Login
-          </Button>
+          {isPending ? (
+            <Button className="w-full" disabled={true}>
+              <LoaderCircle className="animate-spin" />
+            </Button>
+          ) : (
+            <Button type="submit" className="w-full" disabled={isPending}>
+              Login
+            </Button>
+          )}
         </form>
       </Form>
     </AuthCardWrapper>

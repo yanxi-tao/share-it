@@ -6,26 +6,26 @@ import {
   DialogTitle,
   DialogTrigger,
   // DialogFooter,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { useMutation } from '@tanstack/react-query'
-import { useQuery } from '@tanstack/react-query'
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
-import { Link, Plus, Search, Space, X } from 'lucide-react'
-import { useState, useEffect } from 'react'
-import { Session } from 'inspector/promises'
+import { Link, Plus, Search, Space, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Session } from "inspector/promises";
 
-const apiUrl = import.meta.env.VITE_API_URL
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export const AcceptInvite = ({
   userId,
   isOpen,
   onOpenChange,
 }: {
-  userId: string
-  isOpen: boolean
-  onOpenChange: (open: boolean) => void
+  userId: string;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
 }) => {
   //   const searchUserMutation = useMutation({
   //     mutationFn: async (id: string) => {
@@ -49,34 +49,43 @@ export const AcceptInvite = ({
   //   })
 
   const { error, isLoading, data } = useQuery({
-    queryKey: ['user', userId],
+    queryKey: ["user", userId],
     queryFn: async () => {
-      const response = await fetch(`${apiUrl}/invites/${userId}`)
+      const response = await fetch(`${apiUrl}/invites/${userId}`);
+      // need aask if can return inviter name and also space name aswell as what he has right now
       if (!response.ok) {
-        throw new Error('Network response was not ok')
+        throw new Error("Network response was not ok");
       }
-      return response.json()
+      return response.json();
     },
-  })
+  });
 
-  console.log(data)
+  console.log(data);
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         {isLoading && <div>Loading</div>}
-        {data &&
-          data.map((invite) => (
-            <div className="border-2 border-gray-100 rounded-3xl flex justify-between">
-              <div>
-                You have been invited to {invite.space} by {invite.name}
-              </div>
-              <div>
-                <Button className="bg-green-600">Accept</Button>
-                <Button variant="destructive">Decline</Button>
-              </div>
-            </div>
-          ))}
+        {data && (
+          <ul>
+            {data.map((invite: { space: string; name: string }) => (
+              <li
+                key={invite.name}
+                className="border-2 border-cyan-50 rounded-xl flex justify-between "
+              >
+                <div className="text-foreground">
+                  You have been invited to {invite.space} by {invite.name}
+                </div>
+                <div>
+                  <Button className="bg-green-600" variant="destructive">
+                    Accept
+                  </Button>
+                  <Button variant="destructive">Decline</Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};

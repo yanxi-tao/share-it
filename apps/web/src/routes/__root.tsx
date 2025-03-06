@@ -1,13 +1,13 @@
-import { createRootRoute, Outlet } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@/lib/devtools/react-router'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@/lib/devtools/react-router";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export const Route = createRootRoute({
   component: () => (
-    <main className="h-screen w-screen flex justify-center items-center flex-col">
+    <main className="h-screen w-screen flex justify-center items-center flex-col bg-background text-foreground">
       <Outlet />
       <TanStackRouterDevtools />
       <ReactQueryDevtools />
     </main>
   ),
-})
+});

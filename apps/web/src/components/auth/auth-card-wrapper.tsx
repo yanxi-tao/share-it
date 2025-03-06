@@ -28,7 +28,7 @@ export const AuthCardWrapper = ({
   showProvider = true,
 }: AuthCardWrapperProps) => {
   return (
-    <Card className="w-[500px] bg-primary-foreground">
+    <Card className="w-[500px] bg-background text-foreground">
       <CardHeader>
         <CardTitle className="text-center">{headerLabel}</CardTitle>
       </CardHeader>
