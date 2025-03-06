@@ -7,8 +7,8 @@ import { invites } from "./invites";
 
 export const usersRelations = relations(users, ({ many }) => ({
   feeds: many(feeds),
-  invitesIssued: many(invites),
-  invitesReceived: many(invites),
+  invitesIssued: many(invites, { relationName: "inviter" }),
+  invitesReceived: many(invites, { relationName: "guest" }),
   membersToSpaces: many(membersToSpaces),
 }));
 
