@@ -4,17 +4,19 @@ import { Button } from '@/components/ui/button'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import logo from '/src/assets/share-it_logo.png'
+import { useState } from 'react'
+import { Menu, X } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
+  navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu'
 
 const components: { title: string; href: string; description: string }[] = [
@@ -62,6 +64,8 @@ export const Route = createFileRoute('/')({
 })
 
 function Index() {
+  const [menuOpen, setMenuOpen] = useState(false)
+
   const { data } = useQuery({
     queryKey: ['test'],
     queryFn: async () => {
@@ -69,19 +73,32 @@ function Index() {
       return response.text()
     },
   })
-
   return (
     <div className="flex min-h-screen flex-col overflow-hidden overflow-y-auto scrollbar-thin scrollbar-track-background scrollbar-thumb-accent bg-background">
       <div className="relative flex flex-col item-center gap-6">
-        <div className="relative flex flex-col w-screen my-2 p-5">
-          <div className="relative flex flex-row p-3 space-x-4 bg-muted text-muted-foreground rounded-xl shadow-md">
-            <div className="relative flex">
-              <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
+        <div className="relative flex flex-col w-screen my-2 px-5 md:px-40">
+          <div className="relative flex flex-row p-3 space-x-4 justify-between bg-muted text-muted-foreground rounded-xl shadow-md">
+            <div className="relative flex items-center gap-2">
+              <div className="relative flex">
+                <Avatar>
+                  <AvatarImage src={logo} />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+              </div>
+              <div className="relative flex">
+                <h1 className="text-xl tracking-regular">Share-It</h1>
+              </div>
             </div>
-            <div className="relative flex">
+
+            {/* Hamburger menu for small screens */}
+            <button
+              className="md:hidden flex items-center"
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              {menuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
+
+            <div className="hidden md:flex gap-6">
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
@@ -106,22 +123,19 @@ function Index() {
                             </a>
                           </NavigationMenuLink>
                         </li>
-                        <ListItem href="/docs" title="Introduction">
+                        <li href="/docs" title="Introduction">
                           Re-usable components built using Radix UI and Tailwind
                           CSS.
-                        </ListItem>
-                        <ListItem
-                          href="/docs/installation"
-                          title="Installation"
-                        >
+                        </li>
+                        <li href="/docs/installation" title="Installation">
                           How to install dependencies and structure your app.
-                        </ListItem>
-                        <ListItem
+                        </li>
+                        <li
                           href="/docs/primitives/typography"
                           title="Typography"
                         >
                           Styles for headings, paragraphs, lists...etc
-                        </ListItem>
+                        </li>
                       </ul>
                     </NavigationMenuContent>
                   </NavigationMenuItem>
@@ -130,20 +144,33 @@ function Index() {
                     <NavigationMenuContent>
                       <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
                         {components.map((component) => (
-                          <ListItem
+                          <li
                             key={component.title}
                             title={component.title}
                             href={component.href}
                           >
                             {component.description}
-                          </ListItem>
+                          </li>
                         ))}
                       </ul>
                     </NavigationMenuContent>
                   </NavigationMenuItem>
-                  <NavigationMenuItem></NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <Link to="/auth/signup">
+                      <NavigationMenuLink
+                        className={navigationMenuTriggerStyle()}
+                      >
+                        Documentation
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
                 </NavigationMenuList>
               </NavigationMenu>
+            </div>
+            <div className="relative flex">
+              <Link to="/auth/signup">
+                <Button variant={'outline'}>sign up</Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -158,6 +185,66 @@ function Index() {
             <Link to="/auth/signup">Sign up Here</Link>
           </Button>
         </div>
+
+        {/* Mobile Dropdown */}
+        {menuOpen && (
+          <div className="md:hidden flex flex-col items-center gap-4 mt-4 p-4 bg-muted text-muted-foreground rounded-xl shadow-md">
+            <NavigationMenu>
+              <NavigationMenuList className="flex flex-col gap-3">
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid gap-3 p-4 w-full">
+                      <ListItem href="/docs" title="Introduction">
+                        Re-usable components built using Radix UI and Tailwind
+                        CSS.
+                      </ListItem>
+                      <ListItem href="/docs/installation" title="Installation">
+                        How to install dependencies and structure your app.
+                      </ListItem>
+                      <ListItem
+                        href="/docs/primitives/typography"
+                        title="Typography"
+                      >
+                        Styles for headings, paragraphs, lists...etc
+                      </ListItem>
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>Components</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid gap-3 p-4 w-full">
+                      {components.map((component) => (
+                        <li
+                          key={component.title}
+                          title={component.title}
+                          href={component.href}
+                        >
+                          {component.description}
+                        </li>
+                      ))}
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link to="/auth/signup">
+                    <NavigationMenuLink
+                      className={navigationMenuTriggerStyle()}
+                    >
+                      Documentation
+                    </NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+
+            {/* Mobile Signup Button */}
+            <Link to="/auth/signup">
+              <Button variant={'outline'}>Sign up</Button>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   )
