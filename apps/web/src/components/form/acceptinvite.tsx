@@ -1,20 +1,7 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  // DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
-
-import { Link, Plus, Search, Space, X } from "lucide-react";
-import { useState, useEffect } from "react";
-import { Session } from "inspector/promises";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -27,32 +14,43 @@ export const AcceptInvite = ({
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }) => {
-  //   const searchUserMutation = useMutation({
-  //     mutationFn: async (id: string) => {
-  //       const response = await fetch(`${apiUrl}/invites/create`, {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify({
-  //           inviterId: userId,
-  //           guestId: id,
-  //         }),
-  //       })
+  const queryClient = useQueryClient();
 
-  //       if (!response.ok) {
-  //         throw new Error('User search failed')
-  //       }
+  const searchUserMutation = useMutation({
+    mutationFn: async ({
+      inviteId,
+      spaceId,
+      accepted,
+    }: {
+      inviteId: string;
+      spaceId: string;
+      accepted: boolean;
+    }) => {
+      const response = await fetch(`${apiUrl}/invites/response`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          inviteId: inviteId,
+          spaceId: spaceId,
+          response: accepted,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("failed to save changes");
+      }
+      return response.json();
+    },
+    onSuccess() {
+      queryClient.refetchQueries();
+    },
+  });
 
-  //       return response.json()
-  //     },
-  //   })
-
-  const { error, isLoading, data } = useQuery({
+  const { isLoading, data } = useQuery({
     queryKey: ["user", userId],
     queryFn: async () => {
       const response = await fetch(`${apiUrl}/invites/${userId}`);
-      // need aask if can return inviter name and also space name aswell as what he has right now
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -65,24 +63,25 @@ export const AcceptInvite = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         {isLoading && <div>Loading</div>}
-        {data && (
+        {!isLoading && (!data || data.length === 0) ? (
+          <div className="text-foreground">No pending invites</div>
+        ) : (
           <ul>
-            {data.map((invite: { space: string; name: string }) => (
-              <li
-                key={invite.name}
-                className="border-2 border-cyan-50 rounded-xl flex justify-between "
-              >
-                <div className="text-foreground">
-                  You have been invited to {invite.space} by {invite.name}
-                </div>
-                <div>
-                  <Button className="bg-green-600" variant="destructive">
-                    Accept
-                  </Button>
-                  <Button variant="destructive">Decline</Button>
-                </div>
-              </li>
-            ))}
+            {data?.map(
+              (invite: {
+                id: string;
+                space: string;
+                name: string;
+                spaceId: string;
+              }) => (
+                <li
+                  key={invite.id}
+                  className="border-2 border-cyan-50 rounded-xl flex justify-between "
+                >
+                  {/* ... rest of your invite item code ... */}
+                </li>
+              ),
+            )}
           </ul>
         )}
       </DialogContent>

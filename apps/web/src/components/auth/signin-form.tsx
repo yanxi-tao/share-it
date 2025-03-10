@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import { SignInSchema } from "@/lib/schema";
 import { SignInSchemaType } from "@/lib/types";
 import { authClient } from "@/lib/auth-client";
-import { LoaderCircle } from "lucide-react";
+import { Fan, LoaderCircle } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -45,6 +45,8 @@ export const SignInForm = () => {
           navigate({ to: "/home" });
         },
         onError: (ctx) => {
+          setIsPending(false);
+          form.reset();
           alert(ctx.error.message);
         },
       },

@@ -2,19 +2,17 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateFeedSchemaType } from "@/lib/types";
 import { CreateFeedSchema } from "@/lib/schema";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -44,6 +42,7 @@ export const FeedForm = ({
   search: string;
   setSearch: (value: string) => void;
 }) => {
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
 
@@ -82,6 +81,7 @@ export const FeedForm = ({
       setSearch("");
       // Clear the space selection if needed
       setValue("");
+      queryClient.refetchQueries();
     },
   });
 
@@ -175,7 +175,10 @@ export const FeedForm = ({
         ) : (
           <></>
         )}
-        <Button type="submit">Add Link</Button>
+
+        <Button type="submit" disabled={mutation.isPending}>
+          Add Link
+        </Button>
       </form>
     </Form>
   );

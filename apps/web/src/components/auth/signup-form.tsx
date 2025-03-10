@@ -18,6 +18,7 @@ import { authClient } from "@/lib/auth-client";
 
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { LoaderCircle } from "lucide-react";
 
 export const SignUpForm = () => {
   const navigate = useNavigate();
@@ -48,6 +49,8 @@ export const SignUpForm = () => {
           navigate({ to: "/home" });
         },
         onError: (ctx) => {
+          setIsPending(false);
+          form.reset();
           alert(ctx.error.message);
         },
       },
@@ -122,9 +125,16 @@ export const SignUpForm = () => {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full" disabled={isPending}>
-            Create Account
-          </Button>
+
+          {isPending ? (
+            <Button className="w-full" disabled={true}>
+              <LoaderCircle className="animate-spin" />
+            </Button>
+          ) : (
+            <Button type="submit" className="w-full" disabled={isPending}>
+              Create Account
+            </Button>
+          )}
         </form>
       </Form>
     </AuthCardWrapper>
