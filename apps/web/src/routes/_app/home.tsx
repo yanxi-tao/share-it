@@ -1,54 +1,58 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
 
-import { FeedForm } from '@/components/form/feed-form'
-import { useQuery } from '@tanstack/react-query'
-import { authClient } from '@/lib/auth-client'
-import { FeedCard } from '@/components/card/feed-card'
-import { useState, useEffect } from 'react'
-import Fuse from 'fuse.js'
+import { FeedForm } from "@/components/form/feed-form";
+import { useQuery } from "@tanstack/react-query";
+import { authClient } from "@/lib/auth-client";
+import { FeedCard } from "@/components/card/feed-card";
+import { useState, useEffect } from "react";
+import Fuse from "fuse.js";
 
-const apiUrl = import.meta.env.VITE_API_URL
+const apiUrl = import.meta.env.VITE_API_URL;
 
-export const Route = createFileRoute('/_app/home')({
+export const Route = createFileRoute("/_app/home")({
   component: Home,
-})
+});
 
 function Home() {
-  const { data: session } = authClient.useSession()
-  const [search, setSearch] = useState('')
+  const { data: session } = authClient.useSession();
+  const [search, setSearch] = useState("");
+
+  console.log("User: ", session);
 
   const { data, error, isLoading } = useQuery({
-    queryKey: ['feeds'], //, session?.data?.id
+    queryKey: ["feeds"], //, session?.data?.id
     queryFn: async () => {
-      const response = await fetch(`${apiUrl}/users/${session?.user?.id}`) //${apiUrl}/users/${session?.user?.id}/feeds
+      const response = await fetch(
+        `${apiUrl}/users/${session?.session.userId}`,
+      ); //${apiUrl}/users/${session?.user?.id}/feeds
       if (!response.ok) {
-        throw new Error('Network response was not ok')
+        throw new Error("Network response was not ok");
       }
-      return response.json()
+      return response.json();
     },
-    enabled: !!session?.user?.id, // Only run the query if session.data.id is available
-  })
+    enabled: !!session?.session.userId, // Only run the query if session.data.id is available
+  });
 
   const options = {
     isCaseSensitive: false,
     ignoreDiacritics: false,
     includeMatches: false,
-    threshold: '0.5',
+    threshold: "0.5",
     // Search in `author` and in `tags` array
-    keys: ['title', 'url', 'description'],
-  }
+    keys: ["title", "url", "description"],
+  };
 
   function enumerateFeeds() {
     if (isLoading) {
-      return <p>Loading...</p>
+      return <p>Loading...</p>;
     }
 
     if (error) {
-      return <p>Error loading feeds</p>
+      return <p>Error loading feeds</p>;
     }
 
     if (Array.isArray(data)) {
-      if (search == '') {
+      if (search == "") {
         return data.map((ele: any) => (
           <FeedCard
             key={ele.id}
@@ -58,11 +62,11 @@ function Home() {
             title={ele.title}
             //description={ele.description}
           />
-        ))
+        ));
       } else {
-        const fuse = new Fuse(data, options)
-        const result = fuse.search(search)
-        console.log(result)
+        const fuse = new Fuse(data, options);
+        const result = fuse.search(search);
+        console.log(result);
         return result.map(({ item }: any) => (
           <FeedCard
             key={item.id}
@@ -72,18 +76,18 @@ function Home() {
             title={item.title}
             // description={item.description}
           />
-        ))
+        ));
       }
     }
 
-    return <p>No feeds available</p>
+    return <p>No feeds available</p>;
   }
 
   return (
     <div className="min-h-screen w-full p-4 bg-background text-foreground flex-grow">
       <div className="mb-4">
         <FeedForm
-          userId={session?.user?.id ?? ''}
+          userId={session?.session.userId ?? ""}
           spaceId=""
           setSearch={setSearch}
           search={search}
@@ -95,5 +99,5 @@ function Home() {
         </div>
       </div>
     </div>
-  )
+  );
 }

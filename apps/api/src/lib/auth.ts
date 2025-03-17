@@ -1,11 +1,11 @@
-import { betterAuth } from 'better-auth'
-import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { db } from '~/db/client'
-import * as schema from '~/db/schema/users'
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { db } from "~/db/client";
+import * as schema from "~/db/schema/users";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
-    provider: 'sqlite',
+    provider: "sqlite",
     schema: {
       ...schema,
     },
@@ -16,4 +16,14 @@ export const auth = betterAuth({
     autoSignIn: true,
   },
   trustedOrigins: [process.env.FRONTEND_URL!],
-})
+  advanced: {
+    crossSubDomainCookies: {
+      enabled: true,
+    },
+    defaultCookieAttributes: {
+      sameSite: "none",
+      secure: true,
+      partitioned: true, // New browser standards will mandate this for foreign cookies
+    },
+  },
+});

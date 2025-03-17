@@ -35,20 +35,20 @@ export function LeftSidebar({
 }: LeftSidebarProps) {
   const navigate = useNavigate();
   const { data: session } = authClient.useSession();
-  console.log("User ID:", session?.user?.id);
+  console.log("User ID:", session?.session.userId);
 
   const { data, error, isLoading } = useQuery({
     queryKey: ["spaces"], //, session?.data?.id
     queryFn: async () => {
       const response = await fetch(
-        `${apiUrl}/users/${session?.user?.id}/spaces`,
+        `${apiUrl}/users/${session?.session.userId}/spaces`,
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       return response.json();
     },
-    enabled: !!session?.user?.id,
+    enabled: !!session?.session.userId,
   });
 
   async function logout() {
@@ -89,7 +89,9 @@ export function LeftSidebar({
               <Button
                 className="rounded-4xl"
                 variant="ghost"
-                onClick={() => setShowAddPeopleForm(ele.id, session.user.id)}
+                onClick={() =>
+                  setShowAddPeopleForm(ele.id, session?.session.userId ?? "")
+                }
               >
                 <UserPlus />
               </Button>
@@ -118,7 +120,7 @@ export function LeftSidebar({
             <Home className="w-10 h-10" />
           </Button>
           <span>Your Spaces</span>
-          <SpaceForm ownerId={session?.user?.id ?? ""} />
+          <SpaceForm ownerId={session?.session.userId ?? ""} />
         </div>
         <SidebarContent>
           <SidebarGroup />
@@ -137,7 +139,7 @@ export function LeftSidebar({
 
               <DropdownMenuContent>
                 <DropdownMenuItem
-                  onClick={() => setShowInvites(session.user.id)}
+                  onClick={() => setShowInvites(session?.session.userId ?? "")}
                 >
                   Notifications <BellDot />
                 </DropdownMenuItem>

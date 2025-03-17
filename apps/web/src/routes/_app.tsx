@@ -3,7 +3,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { LeftSidebar } from "@/components/shared/left-sidebar";
 import { useState } from "react";
 import { AddPeopleForm } from "@/components/form/add-people";
-import { authClient } from "@/lib/auth";
+// import { authClient } from "@/lib/auth";
 import { AcceptInvite } from "@/components/form/acceptinvite";
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_app")({
 });
 
 function LayoutComponent() {
-  const { data: session } = authClient.useSession();
+  //  const { data: session } = authClient.useSession();
   const [selectedSpaceId, setSelectedSpaceId] = useState("");
   const [selectedUserId, setSelectedUserId] = useState("");
   const [isDialogOpenPeople, setIsDialogOpenPeople] = useState(false);
