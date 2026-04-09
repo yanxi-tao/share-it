@@ -26,12 +26,21 @@ invitesRoute.get("/", async (c) => {
 
 invitesRoute.get("/:userId", async (c) => {
   const userId = c.req.param("userId");
+  const { spaces } = await import("~/db/schema/spaces");
+  const { users } = await import("~/db/schema/users");
+  
   const userInvites = await db
-    .select()
+    .select({
+      id: invites.id,
+      spaceId: invites.spaceId,
+      inviterId: invites.inviterId,
+      spaceName: spaces.name,
+      inviterName: users.name,
+    })
     .from(invites)
+    .leftJoin(spaces, eq(invites.spaceId, spaces.id))
+    .leftJoin(users, eq(invites.inviterId, users.id))
     .where(eq(invites.guestId, userId));
-
-  // console.log(userInvites);
 
   return c.json(userInvites);
 });
@@ -65,11 +74,16 @@ invitesRoute.post(
   async (c) => {
     const { inviteId, spaceId, response } = c.req.valid("json");
 
+    const [invite] = await db
+      .select()
+      .from(invites)
+      .where(eq(invites.id, inviteId));
+
     await db.delete(invites).where(eq(invites.id, inviteId));
 
-    if (response) {
-      db.insert(membersToSpaces).values({
-        memberId: inviteId,
+    if (response && invite) {
+      await db.insert(membersToSpaces).values({
+        memberId: invite.guestId,
         spaceId,
       });
     }

@@ -4,6 +4,7 @@ import { db } from "~/db/client";
 import * as schema from "~/db/schema/users";
 
 export const auth = betterAuth({
+  baseURL: process.env.API_BASE_URL || "http://localhost:3000",
   database: drizzleAdapter(db, {
     provider: "sqlite",
     schema: {
@@ -15,6 +16,16 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: true,
   },
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    },
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    },
+  },
   trustedOrigins: [process.env.FRONTEND_URL!],
   advanced: {
     crossSubDomainCookies: {
@@ -23,7 +34,7 @@ export const auth = betterAuth({
     defaultCookieAttributes: {
       sameSite: "none",
       secure: true,
-      partitioned: true, // New browser standards will mandate this for foreign cookies
+      partitioned: true,
     },
   },
 });
