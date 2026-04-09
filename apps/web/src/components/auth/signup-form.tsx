@@ -1,40 +1,38 @@
 import {
   Form,
   FormControl,
-  //   FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { AuthCardWrapper } from "@/components/auth/auth-card-wrapper";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { SignUpSchema } from "@/lib/schema";
-import { SignUpSchemaType } from "@/lib/types";
-import { authClient } from "@/lib/auth-client";
-
-import { useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { LoaderCircle } from "lucide-react";
+} from '@/components/ui/form'
+import { AuthCardWrapper } from '@/components/auth/auth-card-wrapper'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { SignUpSchema } from '@/lib/schema'
+import { SignUpSchemaType } from '@/lib/types'
+import { authClient } from '@/lib/auth-client'
+import { LoaderCircle } from 'lucide-react'
+import { useNavigate } from '@tanstack/react-router'
+import { useState } from 'react'
+import { Mail, Lock, User } from 'lucide-react'
 
 export const SignUpForm = () => {
-  const navigate = useNavigate();
-  const [isPending, setIsPending] = useState(false);
+  const navigate = useNavigate()
+  const [isPending, setIsPending] = useState(false)
   const form = useForm<SignUpSchemaType>({
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      repassword: "",
+      name: '',
+      email: '',
+      password: '',
+      repassword: '',
     },
-  });
+  })
 
   const onSubmit = async (values: SignUpSchemaType) => {
-    console.log(values);
     await authClient.signUp.email(
       {
         name: values.name,
@@ -43,42 +41,46 @@ export const SignUpForm = () => {
       },
       {
         onRequest: () => {
-          setIsPending(true);
+          setIsPending(true)
         },
         onSuccess: () => {
-          navigate({ to: "/home" });
+          navigate({ to: '/home' })
         },
         onError: (ctx) => {
-          setIsPending(false);
-          form.reset();
-          alert(ctx.error.message);
+          setIsPending(false)
+          form.reset()
+          alert(ctx.error.message)
         },
       },
-    );
-  };
+    )
+  }
 
   return (
     <AuthCardWrapper
       headerLabel="Create an account"
-      redirectLabel="Already have an account? Login here"
+      redirectLabel="Sign in instead"
       redirectPath="/auth/signin"
-      showProvider={!isPending}
     >
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 bg-background text-foreground"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel className="text-xs font-medium">Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Johnny" {...field} type="text" />
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="John Doe"
+                      {...field}
+                      type="text"
+                      className="pl-10"
+                    />
+                  </div>
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
@@ -87,15 +89,19 @@ export const SignUpForm = () => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel className="text-xs font-medium">Email</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="abc@example.com"
-                    {...field}
-                    type="email"
-                  />
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="you@example.com"
+                      {...field}
+                      type="email"
+                      className="pl-10"
+                    />
+                  </div>
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
@@ -104,11 +110,19 @@ export const SignUpForm = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel className="text-xs font-medium">Password</FormLabel>
                 <FormControl>
-                  <Input {...field} type="password" />
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      {...field}
+                      type="password"
+                      placeholder="Min. 8 characters"
+                      className="pl-10"
+                    />
+                  </div>
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
@@ -117,26 +131,35 @@ export const SignUpForm = () => {
             name="repassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
+                <FormLabel className="text-xs font-medium">Confirm Password</FormLabel>
                 <FormControl>
-                  <Input {...field} type="password" />
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      {...field}
+                      type="password"
+                      placeholder="Confirm your password"
+                      className="pl-10"
+                    />
+                  </div>
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
 
-          {isPending ? (
-            <Button className="w-full" disabled={true}>
-              <LoaderCircle className="animate-spin" />
-            </Button>
-          ) : (
-            <Button type="submit" className="w-full" disabled={isPending}>
-              Create Account
-            </Button>
-          )}
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? (
+              <>
+                <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                Creating account...
+              </>
+            ) : (
+              'Create Account'
+            )}
+          </Button>
         </form>
       </Form>
     </AuthCardWrapper>
-  );
-};
+  )
+}

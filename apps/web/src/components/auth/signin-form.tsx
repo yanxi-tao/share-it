@@ -1,37 +1,35 @@
 import {
   Form,
   FormControl,
-  //   FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { AuthCardWrapper } from "@/components/auth/auth-card-wrapper";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { SignInSchema } from "@/lib/schema";
-import { SignInSchemaType } from "@/lib/types";
-import { authClient } from "@/lib/auth-client";
-import { Fan, LoaderCircle } from "lucide-react";
-import { useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+} from '@/components/ui/form'
+import { AuthCardWrapper } from '@/components/auth/auth-card-wrapper'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { SignInSchema } from '@/lib/schema'
+import { SignInSchemaType } from '@/lib/types'
+import { authClient } from '@/lib/auth-client'
+import { LoaderCircle, Mail, Lock } from 'lucide-react'
+import { useNavigate } from '@tanstack/react-router'
+import { useState } from 'react'
 
 export const SignInForm = () => {
-  const navigate = useNavigate();
-  const [isPending, setIsPending] = useState(false);
+  const navigate = useNavigate()
+  const [isPending, setIsPending] = useState(false)
   const form = useForm<SignInSchemaType>({
     resolver: zodResolver(SignInSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
-  });
+  })
 
   const onSubmit = async (values: SignInSchemaType) => {
-    console.log(values);
     await authClient.signIn.email(
       {
         email: values.email,
@@ -39,43 +37,46 @@ export const SignInForm = () => {
       },
       {
         onRequest: () => {
-          setIsPending(true);
+          setIsPending(true)
         },
         onSuccess: () => {
-          navigate({ to: "/home" });
+          navigate({ to: '/home' })
         },
         onError: (ctx) => {
-          setIsPending(false);
-          form.reset();
-          alert(ctx.error.message);
+          setIsPending(false)
+          form.reset()
+          alert(ctx.error.message)
         },
       },
-    );
-  };
+    )
+  }
 
   return (
     <AuthCardWrapper
       headerLabel="Welcome back"
-      redirectLabel="Dont have an account? Register here"
+      redirectLabel="Create an account"
       redirectPath="/auth/signup"
-      showProvider={!isPending}
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel className="text-xs font-medium">Email</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="abc@example.com"
-                    {...field}
-                    type="email"
-                  />
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="you@example.com"
+                      {...field}
+                      type="email"
+                      className="pl-10"
+                    />
+                  </div>
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
@@ -84,25 +85,35 @@ export const SignInForm = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel className="text-xs font-medium">Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="123456" {...field} type="password" />
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      {...field}
+                      type="password"
+                      placeholder="Your password"
+                      className="pl-10"
+                    />
+                  </div>
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
-          {isPending ? (
-            <Button className="w-full" disabled={true}>
-              <LoaderCircle className="animate-spin" />
-            </Button>
-          ) : (
-            <Button type="submit" className="w-full" disabled={isPending}>
-              Login
-            </Button>
-          )}
+
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? (
+              <>
+                <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                Signing in...
+              </>
+            ) : (
+              'Sign In'
+            )}
+          </Button>
         </form>
       </Form>
     </AuthCardWrapper>
-  );
-};
+  )
+}

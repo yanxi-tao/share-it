@@ -1,48 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router'
-import * as React from 'react'
 import { Button } from '@/components/ui/button'
-import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import logo from '/src/assets/share-it_logo.png'
 import { useState } from 'react'
-import { Menu, X, Sun, Moon } from 'lucide-react'
+import { Menu, X, Sun, Moon, Bookmark, Users, Link2, Search, ArrowRight } from 'lucide-react'
 import { Toggle } from '@/components/ui/toggle'
 import { useTheme } from '@/lib/providers/theme-provider'
-
 import { cn } from '@/lib/utils'
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from '@/components/ui/navigation-menu'
-
-const components: { title: string; href: string; description: string }[] = [
-  {
-    title: 'About Us',
-    href: '/docs/primitives/alert-dialog',
-    description:
-      'A modal dialog that interrupts the user with important content and expects a response.',
-  },
-  {
-    title: 'Donate',
-    href: '/docs/primitives/hover-card',
-    description:
-      'For sighted users to preview content available behind a link.',
-  },
-  {
-    title: 'Github',
-    href: '/docs/primitives/progress',
-    description:
-      'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.',
-  },
-]
-
-const apiUrl = import.meta.env.VITE_API_URL
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -50,231 +15,191 @@ export const Route = createFileRoute('/')({
 
 function Index() {
   const { setTheme } = useTheme()
-
   const [menuOpen, setMenuOpen] = useState(false)
 
-  const { data } = useQuery({
-    queryKey: ['test'],
-    queryFn: async () => {
-      const response = await fetch(`${apiUrl}/`)
-      return response.text()
+  const features = [
+    {
+      icon: Bookmark,
+      title: 'Organize',
+      description: 'Create spaces for topics, projects, or teams',
     },
-  })
+    {
+      icon: Users,
+      title: 'Collaborate',
+      description: 'Share spaces and invite others to contribute',
+    },
+    {
+      icon: Link2,
+      title: 'Preview',
+      description: 'Links show rich previews with images and text',
+    },
+    {
+      icon: Search,
+      title: 'Discover',
+      description: 'Find any link instantly with powerful search',
+    },
+  ]
+
   return (
-    <div className="flex min-h-screen flex-col overflow-hidden overflow-y-auto scrollbar-thin scrollbar-track-background scrollbar-thumb-accent bg-background">
-      <div className="relative flex flex-col item-center gap-6">
-        <div className="relative flex flex-col w-screen my-2 px-10 py-5">
-          <div className="relative flex flex-row p-3 space-x-4 justify-between bg-muted text-muted-foreground rounded-xl shadow-md">
-            <div className="relative flex items-center gap-2">
-              <div className="relative flex">
-                <Avatar>
-                  <AvatarImage src={logo} />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-              </div>
-              <div className="relative flex">
-                <h1 className="text-xl tracking-regular">Share-It</h1>
-              </div>
-            </div>
+    <div className="min-h-screen bg-background text-foreground">
+      <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
+        <div className="container mx-auto flex h-16 items-center justify-between px-4">
+          <Link to="/" className="flex items-center gap-2">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={logo} />
+              <AvatarFallback>SI</AvatarFallback>
+            </Avatar>
+            <span className="text-xl font-bold tracking-tight">Share-It</span>
+          </Link>
 
-            {/* Hamburger menu for small screens */}
-            <button
-              className="md:hidden flex items-center"
-              onClick={() => setMenuOpen(!menuOpen)}
+          <div className="hidden md:flex items-center gap-8">
+            <Link to="/about" className="text-sm font-medium hover:text-primary transition-colors">
+              About
+            </Link>
+            <Toggle
+              onPressedChange={(pressed) => setTheme(pressed ? 'dark' : 'light')}
+              className="rounded-full"
+              aria-label="Toggle theme"
             >
-              {menuOpen ? <X size={28} /> : <Menu size={28} />}
-            </button>
+              <Sun className="h-4 w-4 dark:hidden" />
+              <Moon className="h-4 w-4 hidden dark:block" />
+            </Toggle>
+            <Link to="/auth/signin">
+              <Button variant="ghost" size="sm">Sign In</Button>
+            </Link>
+            <Link to="/auth/signup">
+              <Button size="sm">Get Started</Button>
+            </Link>
+          </div>
 
-            <div className="hidden md:flex gap-6">
-              <NavigationMenu>
-                <NavigationMenuList>
-                  <NavigationMenuItem>
-                    <NavigationMenuTrigger>
-                      Getting started
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                      <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                        <li className="row-span-3">
-                          <NavigationMenuLink asChild>
-                            <a
-                              className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                              href="/"
-                            >
-                              <div className="mb-2 mt-4 text-lg font-medium">
-                                shadcn/ui
-                              </div>
-                              <p className="text-sm leading-tight text-muted-foreground">
-                                Beautifully designed components built with Radix
-                                UI and Tailwind CSS.
-                              </p>
-                            </a>
-                          </NavigationMenuLink>
-                        </li>
-                        <ListItem href="/docs" title="Introduction">
-                          Re-usable components built using Radix UI and Tailwind
-                          CSS.
-                        </ListItem>
-                        <ListItem
-                          href="/docs/installation"
-                          title="Installation"
-                        >
-                          How to install dependencies and structure your app.
-                        </ListItem>
-                        <ListItem
-                          href="/docs/primitives/typography"
-                          title="Typography"
-                        >
-                          Styles for headings, paragraphs, lists...etc
-                        </ListItem>
-                      </ul>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                  <NavigationMenuItem>
-                    <NavigationMenuTrigger>Components</NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                        {components.map((component) => (
-                          <ListItem
-                            key={component.title}
-                            title={component.title}
-                            href={component.href}
-                          >
-                            {component.description}
-                          </ListItem>
-                        ))}
-                      </ul>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                  <NavigationMenuItem>
-                    <Link to="/auth/signup">
-                      <NavigationMenuLink
-                        className={navigationMenuTriggerStyle()}
-                      >
-                        Documentation
-                      </NavigationMenuLink>
-                    </Link>
-                  </NavigationMenuItem>
-                </NavigationMenuList>
-              </NavigationMenu>
-            </div>
+          <button
+            className="md:hidden flex items-center"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
 
-            <div className="hidden md:flex gap-2">
+        {menuOpen && (
+          <div className="md:hidden border-t p-4 space-y-4 bg-background">
+            <Link to="/about" className="block text-sm font-medium py-2">About</Link>
+            <div className="flex items-center gap-4 py-2">
               <Toggle
-                onPressedChange={(pressed) =>
-                  setTheme(pressed ? 'dark' : 'light')
-                }
+                onPressedChange={(pressed) => setTheme(pressed ? 'dark' : 'light')}
                 className="rounded-full"
               >
-                <Sun className="h-5 w-5 dark:hidden" />
-                <Moon className="h-5 w-5 hidden dark:block" />
+                <Sun className="h-4 w-4 dark:hidden" />
+                <Moon className="h-4 w-4 hidden dark:block" />
               </Toggle>
+            </div>
+            <div className="flex flex-col gap-2 pt-2 border-t">
+              <Link to="/auth/signin">
+                <Button variant="outline" className="w-full">Sign In</Button>
+              </Link>
               <Link to="/auth/signup">
-                <Button variant={'outline'}>Sign up</Button>
+                <Button className="w-full">Get Started</Button>
               </Link>
             </div>
           </div>
+        )}
+      </nav>
 
-          {menuOpen && (
-            <div className="md:hidden flex flex-col items-center gap-4 mt-4 p-4 bg-muted text-muted-foreground rounded-xl shadow-md">
-              <NavigationMenu>
-                <NavigationMenuList className="flex flex-col gap-3">
-                  <NavigationMenuItem>
-                    <NavigationMenuTrigger>
-                      Getting started
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                      <ul className="grid gap-3 p-4 w-full">
-                        <ListItem href="/docs" title="Introduction">
-                          Re-usable components built using Radix UI and Tailwind
-                          CSS.
-                        </ListItem>
-                        <ListItem
-                          href="/docs/installation"
-                          title="Installation"
-                        >
-                          How to install dependencies and structure your app.
-                        </ListItem>
-                        <ListItem
-                          href="/docs/primitives/typography"
-                          title="Typography"
-                        >
-                          Styles for headings, paragraphs, lists...etc
-                        </ListItem>
-                      </ul>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                  <NavigationMenuItem>
-                    <NavigationMenuTrigger>Components</NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                      <ul className="grid gap-3 p-4 w-full">
-                        {components.map((component) => (
-                          <ListItem
-                            key={component.title}
-                            title={component.title}
-                            href={component.href}
-                          >
-                            {component.description}
-                          </ListItem>
-                        ))}
-                      </ul>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                  <NavigationMenuItem>
-                    <Link to="/auth/signup">
-                      <NavigationMenuLink
-                        className={navigationMenuTriggerStyle()}
-                      >
-                        Documentation
-                      </NavigationMenuLink>
-                    </Link>
-                  </NavigationMenuItem>
-                </NavigationMenuList>
-              </NavigationMenu>
-
-              <Link to="/auth/signup">
-                <Button variant={'outline'}>Sign up</Button>
-              </Link>
-            </div>
-          )}
-        </div>
-        <div className="relative flex flex-col w-screen my-2 p-8 bg-background text-foreground">
-          <h1 className="flex my-10 text-center text-6xl font-extrabold tracking-tight">
-            Share and organize links effortlessly on a single, collaborative hub
-            with Share-It.
+      <section className="relative py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
+        <div className="container mx-auto px-4 text-center relative">
+          <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 text-xs font-medium rounded-full bg-primary/10 text-primary border border-primary/20">
+            <Bookmark className="h-3 w-3" />
+            Collaborative bookmark management
+          </div>
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 max-w-3xl mx-auto">
+            Share links with your team
+            <br />
+            <span className="text-primary">without the chaos</span>
           </h1>
+          <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-10 leading-relaxed">
+            Create spaces, save links, and collaborate with your team.
+            Beautiful previews, instant search, zero clutter.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/auth/signup">
+              <Button size="lg" className="gap-2">
+                Start for Free
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+            <Link to="/auth/signin">
+              <Button variant="outline" size="lg">
+                Sign In
+              </Button>
+            </Link>
+          </div>
         </div>
-        <div className="relative flex flex-col w-screen my-1 p-2 items-center bg-background text-foreground">
+      </section>
+
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold tracking-tight mb-4">
+              Everything you need
+            </h2>
+            <p className="text-muted-foreground max-w-lg mx-auto">
+              Simple tools to organize, share, and discover links with your team
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className="group p-6 rounded-xl border bg-card hover:bg-card/80 hover:border-primary/30 transition-all duration-200"
+              >
+                <div className="p-2 rounded-lg bg-primary/10 text-primary w-fit mb-4 group-hover:scale-110 transition-transform">
+                  <feature.icon className="h-5 w-5" />
+                </div>
+                <h3 className="font-semibold mb-2">{feature.title}</h3>
+                <p className="text-sm text-muted-foreground">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold tracking-tight mb-4">
+            Ready to get started?
+          </h2>
+          <p className="text-muted-foreground max-w-md mx-auto mb-8">
+            Join thousands of teams who organize their links with Share-It.
+          </p>
           <Link to="/auth/signup">
-            <Button variant={'outline'}>Sign up now</Button>
+            <Button size="lg" className="gap-2">
+              Create Free Account
+              <ArrowRight className="h-4 w-4" />
+            </Button>
           </Link>
         </div>
-      </div>
+      </section>
+
+      <footer className="border-t py-8">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <Link to="/" className="flex items-center gap-2">
+              <Avatar className="h-6 w-6">
+                <AvatarImage src={logo} />
+                <AvatarFallback>SI</AvatarFallback>
+              </Avatar>
+              <span className="font-semibold">Share-It</span>
+            </Link>
+            <p className="text-sm text-muted-foreground">
+              Collaborative bookmark management
+            </p>
+            <div className="flex gap-4 text-sm text-muted-foreground">
+              <Link to="/about" className="hover:text-foreground transition-colors">About</Link>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
-
-const ListItem = React.forwardRef<
-  React.ElementRef<'a'>,
-  React.ComponentPropsWithoutRef<'a'>
->(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={cn(
-            'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
-            className
-          )}
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
-        </a>
-      </NavigationMenuLink>
-    </li>
-  )
-})
-ListItem.displayName = 'ListItem'

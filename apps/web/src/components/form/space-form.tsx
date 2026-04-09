@@ -5,8 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  // DialogFooter,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -15,69 +14,73 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
-import { CreateSpaceSchema } from "@/lib/schema";
-import { CreateSpaceSchemaType } from "@/lib/types";
-import { useNavigate } from "@tanstack/react-router";
-import { Plus } from "lucide-react";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { useMutation } from '@tanstack/react-query'
+import { CreateSpaceSchema } from '@/lib/schema'
+import { CreateSpaceSchemaType } from '@/lib/types'
+import { useNavigate } from '@tanstack/react-router'
+import { Plus, FolderPlus } from 'lucide-react'
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL
 
 export const SpaceForm = ({ ownerId }: { ownerId: string }) => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const form = useForm<CreateSpaceSchemaType>({
     resolver: zodResolver(CreateSpaceSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      name: '',
+      description: '',
     },
-  });
+  })
 
   const mutation = useMutation({
     mutationFn: (values: CreateSpaceSchemaType) => {
       return fetch(`${apiUrl}/spaces/create`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           name: values.name,
           description: values.description,
           ownerId,
         }),
-      });
+      })
     },
     onSuccess: async (data) => {
-      const response = await data.json();
-      navigate({ to: `/space/${response.id}` });
+      const response = await data.json()
+      form.reset()
+      navigate({ to: `/space/${response.id}` })
     },
-  });
+  })
 
   function onSubmit(values: CreateSpaceSchemaType) {
-    console.log(values);
-    mutation.mutate(values);
+    mutation.mutate(values)
   }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button type="submit" variant="ghost" size="icon" className="-m-1">
-          <Plus className="" />
+        <Button variant="ghost" size="icon" className="h-7 w-7" title="Create space">
+          <Plus className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Wanna create some spacey</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            <FolderPlus className="h-5 w-5" />
+            Create New Space
+          </DialogTitle>
           <DialogDescription>
-            Create a new space to share with your friends
+            Create a new space to organize your links and share with others
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="name"
@@ -85,10 +88,10 @@ export const SpaceForm = ({ ownerId }: { ownerId: string }) => {
                 <FormItem>
                   <FormLabel>Space Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="some namy" {...field} />
+                    <Input placeholder="My Reading List" {...field} />
                   </FormControl>
                   <FormDescription>
-                    This is your space's public display name.
+                    This will be the display name of your space
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -99,21 +102,23 @@ export const SpaceForm = ({ ownerId }: { ownerId: string }) => {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Space Description</FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input placeholder="some descriptionnnn" {...field} />
+                    <Input placeholder="Articles and links about..." {...field} />
                   </FormControl>
                   <FormDescription>
-                    wanna explain what this space is about?
+                    Optional: describe what this space is for
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <Button type="submit" className="w-full" disabled={mutation.isPending}>
+              {mutation.isPending ? 'Creating...' : 'Create Space'}
+            </Button>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}

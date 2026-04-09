@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const CreateSpaceSchema = z.object({
-  name: z.string().min(5).max(50),
-  description: z.string().min(5).max(100),
+  name: z.string().min(1).max(50),
+  description: z.string().max(200).optional(),
 });
 
 export const CreateFeedSchema = z.object({
