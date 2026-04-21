@@ -2,9 +2,10 @@
   "buildCommand": "bun run build",
   "installCommand": "bun install --frozen-lockfile",
   "framework": "vite",
+  "bunVersion": "1.x",
   "builds": [
     { "src": "apps/web/package.json", "use": "@vercel/static" },
-    { "src": "apps/api/package.json", "use": "@vercel/bun" }
+    { "src": "apps/api/package.json", "use": "@vercel/node" }
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "apps/api/$1" },
