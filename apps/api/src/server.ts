@@ -35,14 +35,17 @@ app.use(logger());
 // Diagnostic routes
 app.get("/api/test", (c) => c.json({ ok: true, ts: Date.now() }));
 app.get("/api/test-db", async (c) => {
+  const url = process.env.TURSO_DATABASE_URL ?? "(not set)";
+  const token = process.env.TURSO_AUTH_TOKEN ?? "(not set)";
+  const tokenPreview = token === "(not set)" ? token : token.slice(0, 8) + "..." + token.slice(-4);
   try {
-    console.log("[test-db] attempting DB query");
+    console.log("[test-db] url:", url, "token:", tokenPreview);
     await db.run(sql`SELECT 1`);
     console.log("[test-db] DB query succeeded");
-    return c.json({ ok: true });
+    return c.json({ ok: true, url, tokenPreview });
   } catch (e) {
     console.error("[test-db] DB query failed:", e);
-    return c.json({ error: String(e) }, 500);
+    return c.json({ error: String(e), url, tokenPreview }, 500);
   }
 });
 app.post("/api/test-body", async (c) => {
