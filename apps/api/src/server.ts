@@ -57,13 +57,25 @@ app.get("/api/test-db-lazy", async (c) => {
   const { sql: sqlFresh } = await import("drizzle-orm");
   const url = (process.env.TURSO_DATABASE_URL ?? "").replace(/^libsql:\/\//, "https://");
   const authToken = process.env.TURSO_AUTH_TOKEN;
-  const freshClient = createClientHttp({ url, authToken });
+
+  let interceptedUrl = "";
+  let interceptedAuth = "";
+  const interceptFetch: typeof fetch = async (input, init) => {
+    const req = input instanceof Request ? input : new Request(input as string, init);
+    interceptedUrl = req.url;
+    interceptedAuth = req.headers.get("authorization") ?? "none";
+    console.log("[libsql-intercept] url:", req.url);
+    console.log("[libsql-intercept] auth:", interceptedAuth.slice(0, 30));
+    return fetch(req);
+  };
+
+  const freshClient = createClientHttp({ url, authToken, fetch: interceptFetch } as any);
   const freshDb = drizzleFresh(freshClient);
   try {
     await freshDb.run(sqlFresh`SELECT 1`);
-    return c.json({ ok: true });
+    return c.json({ ok: true, interceptedUrl, interceptedAuth: interceptedAuth.slice(0, 30) });
   } catch (e) {
-    return c.json({ error: String(e) }, 500);
+    return c.json({ error: String(e), interceptedUrl, interceptedAuth: interceptedAuth.slice(0, 30) }, 500);
   }
 });
 
