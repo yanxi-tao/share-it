@@ -6,7 +6,6 @@ import { feedsRoute } from "~/endpoints/feeds";
 import { spacesRoute } from "~/endpoints/spaces";
 import { usersRoute } from "~/endpoints/users";
 import { invitesRoute } from "~/endpoints/invites";
-import { handle } from "@vercel/hono";
 
 const app = new Hono<{
   Variables: {
@@ -42,4 +41,4 @@ app.route("/spaces", spacesRoute);
 app.route("/users", usersRoute);
 app.route("/invites", invitesRoute);
 
-export default handle(app);
+export default app;
