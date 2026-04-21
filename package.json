@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "dev": "bun run --filter=api dev & bun run --filter=web dev",
-    "build": "bun run build:web",
+    "build": "bun run build:api && bun run build:web",
     "build:api": "cd apps/api && bun run build",
     "build:web": "cd apps/web && bun run build"
   },
