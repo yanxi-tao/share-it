@@ -51,6 +51,22 @@ app.get("/api/test-db", async (c) => {
   }
 });
 
+app.get("/api/test-db-lazy", async (c) => {
+  const { createClient: createClientHttp } = await import("@libsql/client/http");
+  const { drizzle: drizzleFresh } = await import("drizzle-orm/libsql");
+  const { sql: sqlFresh } = await import("drizzle-orm");
+  const url = (process.env.TURSO_DATABASE_URL ?? "").replace(/^libsql:\/\//, "https://");
+  const authToken = process.env.TURSO_AUTH_TOKEN;
+  const freshClient = createClientHttp({ url, authToken });
+  const freshDb = drizzleFresh(freshClient);
+  try {
+    await freshDb.run(sqlFresh`SELECT 1`);
+    return c.json({ ok: true });
+  } catch (e) {
+    return c.json({ error: String(e) }, 500);
+  }
+});
+
 app.get("/api/test-fetch", async (c) => {
   const rawUrl = process.env.TURSO_DATABASE_URL ?? "";
   const token = (process.env.TURSO_AUTH_TOKEN ?? "").trimEnd();
