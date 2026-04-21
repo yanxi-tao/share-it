@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "@vercel/hono": "^0.2.47",
     "wrangler": "^3.107.3"
   },
   "peerDependencies": {
