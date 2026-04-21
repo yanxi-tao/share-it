@@ -2,7 +2,6 @@
   "buildCommand": "bun run build:web",
   "installCommand": "bun install --frozen-lockfile",
   "outputDirectory": "apps/web/dist",
-  "nodeVersion": "20.x",
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/index.ts" }
   ],
