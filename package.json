@@ -14,8 +14,9 @@
     "build:web": "cd apps/web && bun run build"
   },
   "devDependencies": {
+    "@hono/node-server": "^2.0.0",
     "@types/bun": "latest",
-"wrangler": "^3.107.3"
+    "wrangler": "^3.107.3"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
