@@ -37,15 +37,39 @@ app.get("/api/test", (c) => c.json({ ok: true, ts: Date.now() }));
 app.get("/api/test-db", async (c) => {
   const url = process.env.TURSO_DATABASE_URL ?? "(not set)";
   const token = process.env.TURSO_AUTH_TOKEN ?? "(not set)";
+  const tokenLen = token.length;
+  const hasTrailingSpace = token !== token.trimEnd();
   const tokenPreview = token === "(not set)" ? token : token.slice(0, 8) + "..." + token.slice(-4);
   try {
-    console.log("[test-db] url:", url, "token:", tokenPreview);
+    console.log("[test-db] url:", url, "tokenLen:", tokenLen, "hasTrailingSpace:", hasTrailingSpace);
     await db.run(sql`SELECT 1`);
     console.log("[test-db] DB query succeeded");
-    return c.json({ ok: true, url, tokenPreview });
+    return c.json({ ok: true, url, tokenPreview, tokenLen, hasTrailingSpace });
   } catch (e) {
     console.error("[test-db] DB query failed:", e);
-    return c.json({ error: String(e), url, tokenPreview }, 500);
+    return c.json({ error: String(e), url, tokenPreview, tokenLen, hasTrailingSpace }, 500);
+  }
+});
+
+app.get("/api/test-fetch", async (c) => {
+  const rawUrl = process.env.TURSO_DATABASE_URL ?? "";
+  const token = (process.env.TURSO_AUTH_TOKEN ?? "").trimEnd();
+  const url = rawUrl.replace(/^libsql:\/\//, "https://");
+  try {
+    const res = await fetch(`${url}/v2/pipeline`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        requests: [{ type: "execute", stmt: { sql: "SELECT 1" } }, { type: "close" }],
+      }),
+    });
+    const text = await res.text();
+    return c.json({ status: res.status, body: text.slice(0, 300) });
+  } catch (e) {
+    return c.json({ error: String(e) }, 500);
   }
 });
 app.post("/api/test-body", async (c) => {
