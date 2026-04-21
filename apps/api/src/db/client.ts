@@ -5,6 +5,7 @@ function createDb() {
   const client = createClient({
     url: process.env.TURSO_DATABASE_URL!.replace(/^libsql:\/\//, 'https://'),
     authToken: process.env.TURSO_AUTH_TOKEN,
+    fetch: (...args: Parameters<typeof fetch>) => fetch(...args),
   })
   return drizzle(client)
 }
