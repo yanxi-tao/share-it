@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun run --hot src/server.ts",
-    "build": "bun build --target=node --external @libsql/client --outdir=dist src/server.ts",
+    "build": "bun build --target=node --alias=\"@libsql/client=@libsql/client/http\" --outdir=dist src/server.ts",
     "start": "NODE_ENV=production bun run dist/server.js",
     "db:push": "bun run --bun drizzle-kit push",
     "db:studio": "bun run --bun drizzle-kit studio"
