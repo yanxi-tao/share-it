@@ -9,9 +9,9 @@
   ],
   "scripts": {
     "dev": "bun run --filter=api dev & bun run --filter=web dev",
-    "build": "bun run --filter=api build & bun run --filter=web build",
-    "build:api": "bun run --filter=api build",
-    "build:web": "bun run --filter=web build"
+    "build": "npx bun run build:api && npx bun run build:web",
+    "build:api": "cd apps/api && bun run build",
+    "build:web": "cd apps/web && bun run build"
   },
   "devDependencies": {
     "@types/bun": "latest",

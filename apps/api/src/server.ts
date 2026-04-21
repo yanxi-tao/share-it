@@ -6,6 +6,7 @@ import { feedsRoute } from "~/endpoints/feeds";
 import { spacesRoute } from "~/endpoints/spaces";
 import { usersRoute } from "~/endpoints/users";
 import { invitesRoute } from "~/endpoints/invites";
+import { vercel } from "hono/vercel";
 
 const app = new Hono<{
   Variables: {
@@ -42,3 +43,5 @@ app.route("/users", usersRoute);
 app.route("/invites", invitesRoute);
 
 export default app;
+export const GET = vercel(app);
+export const POST = vercel(app);
