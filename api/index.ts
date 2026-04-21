@@ -1,12 +1,7 @@
 import { handle } from "@vercel/hono";
-import { Hono } from "hono";
-import { cors } from "hono/cors";
-import { logger } from "hono/logger";
-import { auth } from "../apps/api/src/lib/auth";
-import { feedsRoute } from "../apps/api/src/endpoints/feeds";
-import { spacesRoute } from "../apps/api/src/endpoints/spaces";
-import { usersRoute } from "../apps/api/src/endpoints/users";
-import { invitesRoute } from "../apps/api/src/endpoints/invites";
+import app from "../apps/api/src/server";
+
+export default handle(app);
 
 const app = new Hono<{
   Variables: {

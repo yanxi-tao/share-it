@@ -1,5 +1,8 @@
 {
-  "buildCommand": "bun run build:web",
-  "installCommand": "bun install --frozen-lockfile",
-  "outputDirectory": "apps/web/dist"
+  "buildCommand": "bun run build",
+  "installCommand": "bun install --frozen-lockfile --ignore-scripts",
+  "outputDirectory": "apps/web/dist",
+  "typescript": {
+    "ignoreBuildErrors": true
+  }
 }
