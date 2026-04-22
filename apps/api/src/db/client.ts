@@ -19,7 +19,7 @@ function makeTursoClient() {
     if (v === null || v === undefined) return { type: 'null' }
     if (typeof v === 'bigint') return { type: 'integer', value: String(v) }
     if (typeof v === 'boolean') return { type: 'integer', value: v ? '1' : '0' }
-    if (typeof v === 'number') return { type: 'float', value: String(v) }
+    if (typeof v === 'number') return { type: 'float', value: v }  // must be JSON number, not string
     if (v instanceof ArrayBuffer) return { type: 'blob', base64: btoa(String.fromCharCode(...new Uint8Array(v))) }
     return { type: 'text', value: String(v) }
   }
