@@ -24,10 +24,12 @@ import { CreateSpaceSchema } from '@/lib/schema'
 import { CreateSpaceSchemaType } from '@/lib/types'
 import { useNavigate } from '@tanstack/react-router'
 import { Plus, FolderPlus } from 'lucide-react'
+import { useState } from 'react'
 
 const apiUrl = import.meta.env.VITE_API_URL
 
 export const SpaceForm = ({ ownerId }: { ownerId: string }) => {
+  const [open, setOpen] = useState(false)
   const navigate = useNavigate()
   const form = useForm<CreateSpaceSchemaType>({
     resolver: zodResolver(CreateSpaceSchema),
@@ -54,6 +56,7 @@ export const SpaceForm = ({ ownerId }: { ownerId: string }) => {
     onSuccess: async (data) => {
       const response = await data.json()
       form.reset()
+      setOpen(false)
       navigate({ to: `/space/${response.id}` })
     },
   })
@@ -63,7 +66,7 @@ export const SpaceForm = ({ ownerId }: { ownerId: string }) => {
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="icon" className="h-7 w-7" title="Create space">
           <Plus className="h-4 w-4" />
