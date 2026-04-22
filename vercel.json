@@ -3,6 +3,14 @@
   "installCommand": "bun install --frozen-lockfile",
   "outputDirectory": "apps/web/dist",
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api" }
+    { "source": "/api/(.*)", "destination": "/api" },
+    { "source": "/spaces/(.*)", "destination": "/api" },
+    { "source": "/spaces", "destination": "/api" },
+    { "source": "/feeds/(.*)", "destination": "/api" },
+    { "source": "/feeds", "destination": "/api" },
+    { "source": "/users/(.*)", "destination": "/api" },
+    { "source": "/users", "destination": "/api" },
+    { "source": "/invites/(.*)", "destination": "/api" },
+    { "source": "/invites", "destination": "/api" }
   ]
 }
