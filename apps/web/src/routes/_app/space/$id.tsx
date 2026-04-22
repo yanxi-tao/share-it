@@ -6,7 +6,7 @@ import { FeedCard } from '@/components/card/feed-card'
 import { useState, useEffect } from 'react'
 import Fuse from 'fuse.js'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ArrowLeft, Link2, FolderOpen, Trash2, Pencil, UserPlus } from 'lucide-react'
+import { ArrowLeft, Link2, FolderOpen, Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from '@tanstack/react-router'
 import {
@@ -16,11 +16,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { AddPeopleForm } from '@/components/form/add-people'
 
 const apiUrl = import.meta.env.VITE_API_URL
 
@@ -43,11 +41,9 @@ export const Route = createFileRoute('/_app/space/$id')({
 
 function SpacePerId() {
   const [search, setSearch] = useState('')
-  const [deleteOpen, setDeleteOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const [editName, setEditName] = useState('')
   const [editDescription, setEditDescription] = useState('')
-  const [inviteOpen, setInviteOpen] = useState(false)
   const { id: spaceId } = Route.useParams()
   const { data: session, isLoading } = authClient.useSession()
   const navigate = useNavigate()
@@ -83,20 +79,6 @@ function SpacePerId() {
       queryClient.invalidateQueries({ queryKey: ['space', spaceId] })
       queryClient.invalidateQueries({ queryKey: ['spaces'] })
       setEditOpen(false)
-    },
-  })
-
-  const deleteMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch(`${apiUrl}/spaces/${spaceId}`, {
-        method: 'DELETE',
-      })
-      if (!response.ok) throw new Error('Failed to delete space')
-      return response.json()
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['spaces'] })
-      navigate({ to: '/home' })
     },
   })
 
@@ -157,16 +139,6 @@ function SpacePerId() {
               </div>
             </div>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => setInviteOpen(true)}>
-              <UserPlus className="h-4 w-4 mr-2" />
-              Invite
-            </Button>
-            <Button variant="outline" size="sm" className="text-destructive hover:text-destructive" onClick={() => setDeleteOpen(true)}>
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete
-            </Button>
-          </div>
         </div>
         <FeedForm
           userId={session?.session.userId ?? ''}
@@ -210,29 +182,6 @@ function SpacePerId() {
             </Button>
             <Button onClick={handleEditSave} disabled={updateMutation.isPending}>
               {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Space</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete this space? All links in this space will also be deleted. This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={() => deleteMutation.mutate()}
-              disabled={deleteMutation.isPending}
-            >
-              Delete
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -300,12 +249,6 @@ function SpacePerId() {
         )}
       </div>
 
-      <AddPeopleForm
-        userId={session?.session.userId ?? ''}
-        spaceId={spaceId}
-        isOpen={inviteOpen}
-        onOpenChange={setInviteOpen}
-      />
     </div>
   )
 }

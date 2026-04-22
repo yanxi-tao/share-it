@@ -26,12 +26,23 @@ import {
   Bookmark,
   FolderOpen,
   RefreshCw,
+  MoreHorizontal,
+  UserPlus,
+  Trash2,
 } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useState } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient, useMutation } from '@tanstack/react-query'
 import logo from '/src/assets/share-it_logo.png'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
 const apiUrl = import.meta.env.VITE_API_URL
 
@@ -51,6 +62,22 @@ export function LeftSidebar({ setShowAddPeopleForm, setShowInvites }: LeftSideba
   const queryClient = useQueryClient()
   const { data: session } = authClient.useSession()
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [deleteSpaceId, setDeleteSpaceId] = useState<string | null>(null)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+
+  const deleteMutation = useMutation({
+    mutationFn: async (spaceId: string) => {
+      const response = await fetch(`${apiUrl}/spaces/${spaceId}`, { method: 'DELETE' })
+      if (!response.ok) throw new Error('Failed to delete space')
+      return response.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['spaces'] })
+      setDeleteDialogOpen(false)
+      setDeleteSpaceId(null)
+      navigate({ to: '/home' })
+    },
+  })
 
   const { data: spaces, isLoading } = useQuery<Space[]>({
     queryKey: ['spaces', session?.session.userId],
@@ -141,15 +168,47 @@ export function LeftSidebar({ setShowAddPeopleForm, setShowInvites }: LeftSideba
           {spaces && spaces.length > 0 && (
             <div className="px-3 space-y-1 mt-1">
               {spaces.map((space) => (
-                <Button
-                  key={space.id}
-                  variant="ghost"
-                  className="w-full justify-start gap-2 h-10 text-sm"
-                  onClick={() => navigate({ to: `/space/${space.id}` })}
-                >
-                  <FolderOpen className="h-4 w-4 text-muted-foreground" />
-                  <span className="truncate">{space.name}</span>
-                </Button>
+                <div key={space.id} className="group relative flex items-center">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start gap-2 h-10 text-sm pr-8"
+                    onClick={() => navigate({ to: `/space/${space.id}` })}
+                  >
+                    <FolderOpen className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <span className="truncate">{space.name}</span>
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-1 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent side="right" align="start">
+                      <DropdownMenuItem
+                        onClick={() => setShowAddPeopleForm(space.id, session?.session.userId ?? '')}
+                      >
+                        <UserPlus className="mr-2 h-4 w-4" />
+                        Invite
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        className="text-destructive focus:text-destructive"
+                        onClick={() => {
+                          setDeleteSpaceId(space.id)
+                          setDeleteDialogOpen(true)
+                        }}
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               ))}
             </div>
           )}
@@ -205,6 +264,28 @@ export function LeftSidebar({ setShowAddPeopleForm, setShowInvites }: LeftSideba
           </DropdownMenu>
         </div>
       </SidebarFooter>
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Space</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this space? All links in this space will also be deleted. This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => deleteSpaceId && deleteMutation.mutate(deleteSpaceId)}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Sidebar>
   )
 }
