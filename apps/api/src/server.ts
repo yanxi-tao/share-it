@@ -110,26 +110,8 @@ app.post("/api/test-body", async (c) => {
 });
 
 app.on(["POST", "GET"], "/api/auth/**", async (c) => {
-  console.log("[auth] start, method:", c.req.method, "url:", c.req.url);
-
-  // Force HTTPS URL — better-auth may behave differently with http://
-  const rawUrl = c.req.url.replace(/^http:\/\//, "https://");
-
-  // Pre-read body so it's available as a string (avoids stream exhaustion)
-  let bodyText: string | undefined;
-  if (c.req.method !== "GET" && c.req.method !== "HEAD") {
-    bodyText = await c.req.text();
-    console.log("[auth] body read, length:", bodyText.length);
-  }
-
-  const req = new Request(rawUrl, {
-    method: c.req.method,
-    headers: c.req.raw.headers,
-    body: bodyText ?? null,
-  });
-
-  console.log("[auth] calling auth.handler...");
-  const res = await auth.handler(req);
+  console.log("[auth] start, method:", c.req.method);
+  const res = await auth.handler(c.req.raw);
   console.log("[auth] done, status:", res.status);
   return res;
 });
