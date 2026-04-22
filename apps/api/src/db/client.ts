@@ -29,7 +29,7 @@ function makeTursoClient() {
     const rows = raw.rows.map((row: any[]) => {
       const r: any = row.map((cell: any) => {
         if (!cell || cell.type === 'null') return null
-        if (cell.type === 'integer') return BigInt(cell.value)
+        if (cell.type === 'integer') return Number(cell.value)
         if (cell.type === 'blob') return Uint8Array.from(atob(cell.base64), c => c.charCodeAt(0)).buffer
         return cell.value
       })
@@ -41,7 +41,7 @@ function makeTursoClient() {
       columnTypes: cols.map((c: any) => c.decltype ?? ''),
       rows,
       rowsAffected: raw.affected_row_count ?? 0,
-      lastInsertRowid: raw.last_insert_rowid != null ? BigInt(raw.last_insert_rowid) : undefined,
+      lastInsertRowid: raw.last_insert_rowid != null ? Number(raw.last_insert_rowid) : undefined,
       toJSON() {
         return {
           columns: this.columns,
