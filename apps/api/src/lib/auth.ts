@@ -4,7 +4,7 @@ import { db } from "~/db/client";
 import * as schema from "~/db/schema/users";
 
 export const auth = betterAuth({
-  baseURL: process.env.API_BASE_URL || "http://localhost:3000",
+  baseURL: process.env.API_BASE_URL || "https://share-it.hottorun.com",
   database: drizzleAdapter(db, {
     provider: "sqlite",
     schema: {

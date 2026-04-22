@@ -73,11 +73,13 @@ function makeTursoClient() {
   return {
     async execute(stmt: InStatement) {
       const { sql, args } = normalise(stmt)
+      console.log('[db] execute:', sql.slice(0, 80))
       const results = await pipeline([
         { type: 'execute', stmt: { sql, args: args.map(toValue) } },
       ])
       const r = results[0]
       if (r.type === 'error') throw new Error(r.error.message)
+      console.log('[db] execute done:', sql.slice(0, 40))
       return toResult(r.response.result)
     },
 
