@@ -11,6 +11,7 @@
     { "source": "/users/(.*)", "destination": "/api" },
     { "source": "/users", "destination": "/api" },
     { "source": "/invites/(.*)", "destination": "/api" },
-    { "source": "/invites", "destination": "/api" }
+    { "source": "/invites", "destination": "/api" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
