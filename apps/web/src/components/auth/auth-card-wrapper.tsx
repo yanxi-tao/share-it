@@ -13,6 +13,7 @@ import { Separator } from '@/components/ui/separator'
 import logo from '/src/assets/share-it_logo.png'
 import { FcGoogle } from 'react-icons/fc'
 import { FaGithub } from 'react-icons/fa'
+import { authClient } from '@/lib/auth-client'
 
 type AuthCardWrapperProps = {
   children: React.ReactNode
@@ -56,11 +57,21 @@ export const AuthCardWrapper = ({
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
-              <Button variant="outline" type="button" className="relative overflow-hidden group">
+              <Button
+                variant="outline"
+                type="button"
+                className="relative overflow-hidden group"
+                onClick={() => authClient.signIn.social({ provider: 'google', callbackURL: '/home' })}
+              >
                 <FcGoogle className="h-5 w-5 mr-2" />
                 Google
               </Button>
-              <Button variant="outline" type="button" className="relative overflow-hidden group">
+              <Button
+                variant="outline"
+                type="button"
+                className="relative overflow-hidden group"
+                onClick={() => authClient.signIn.social({ provider: 'github', callbackURL: '/home' })}
+              >
                 <FaGithub className="h-5 w-5 mr-2" />
                 GitHub
               </Button>
